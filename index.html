@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>WebGL test</title>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="css/main.css" />
+</head>
+</body>
+		<div id="app" class="container">
+			<div class="left" style="width: 20%; height: 100%">
+				<div class="pane">
+					<input v-model="newTodo" v-on:keyup.enter="addTodo">
+					<ul>
+						<li v-for="todo in todos">
+						<span>{{ todo.text }}</span>
+						<button v-on:click="removeTodo($index)">X</button>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="right" style="width: 80%; height: 100%">
+				<canvas id="draw"></canvas>
+			</div>
+		</div>
+	<script src="lib/vue.js"></script>
+	<script src="src/app.js"></script>
+</body>
+</html>
