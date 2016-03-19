@@ -34,6 +34,11 @@ canvas {
 .pane {
 	padding: 10px;
 }
+.pane ul {
+	list-style-type: none;
+	margin: 0px;
+	padding: 5px 0px;
+}
 
 /* Input elements */
 
