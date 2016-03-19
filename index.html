@@ -6,26 +6,31 @@
 	<link rel="stylesheet" href="css/main.css" />
 </head>
 </body>
-	<div id="app" class="container">
-		<div class="left" style="width: 20%; height: 100%">
-			<div class="pane">
-				<input v-model="newTodo" v-on:keyup.enter="addTodo">
-				<ul>
-					<li v-for="todo in todos">
-					<span v-cloak>{{ todo.text }}</span>
-					<button v-on:click="removeTodo($index)">X</button>
-					</li>
-				</ul>
+	<div id="app">
+		<div id="container">
+		<section id="sidebar" style="width: 20%; height: 100%">
+			<div style="padding: 8px; padding-bottom: 0px">
+				<input v-model="newItem" v-on:keyup.enter="addComponent" placeholder="enter new Component/Property">
 			</div>
-		</div>
-		<div class="right" style="width: 80%; height: 100%">
-			<viewport>
-				<canvas v-el:draw></canvas>
+			<ul class="main">
+				<li v-for="todo in todos">
+					<div>
+						<a href="#{{ todo.link }}">{{ todo.text }}</a>&nbsp;
+						<button class="square" v-on:click="addSubList($index)">+</button>
+						<button class="square" v-on:click="removeComponent($index)">X</button>
+					</div>
+					<ul class="sub">
+						<li v-for="value in todo.data">{{ $key }} <i>{{ value.type }}</li></li>
+					</ul>			
+				</li>
+			</ul>
+		</section>
+		<section id="viewport" style="width: 80%; height: 100%">
+			<viewport>				
 			</viewport>
-		</div>
+		</section>
 	</div>
-	<script src="lib/vue.js"></script>
-	<script src="src/gl.js"></script>
-	<script src="src/app.js"></script>
+	<script src="lib/vue.min.js"></script>
+	<script src="framework.js"></script>
 </body>
 </html>

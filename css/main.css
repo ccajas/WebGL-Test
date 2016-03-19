@@ -9,60 +9,157 @@ html, body {
 body { 
 	font-family: Helvetica, Arial, "Sans-Serif";
 	font-size: 14px;
-	background: #2b3033;
-	color: #ccc;
+	background: #272727;
+	color: #eee;
+}
+a {
+	text-decoration: none;
+	color: #eee;
 }
 canvas {
 	width: 100%;
 	height: 100%;
-	background: #17191b;
-	border-left: 1px solid #404448;
-	border-right: 1px solid #404448;
+	background: #1c1c1c;
 }
-.container {
+
+#app {
 	width: 100%;
 	height: 100%;
+	position: fixed;
+}
+
+#container {
+	min-height: 100%;
 	position: relative;
+}
+#sidebar, #viewport {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+}
+#sidebar {
+	overflow-y: auto;
+	left: 0px;
+}
+#viewport {
+	right: 0px;
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar {
+    width: 16px;
+	background-color: #272727;
+	color: #aaa;
+}
+::-webkit-scrollbar-thumb {
+	border: 2px solid #272727;
+    background-clip: padding-box;
+    background-color: #141414;
+}
+
+/* List elements */
+
+ul {
+	padding: 0px;
+}
+
+li {
+	padding: 0px;
+}
+
+li, li > div {
+	white-space: nowrap;
+	display: block;
 	overflow: hidden;
+	text-overflow: ellipsis;
 }
-.left {
-	float: left;
+
+ul.main {
+	padding: 8px;
 }
-.right {
-	float: right;
+
+ul.main > li > div,
+ul.sub li {
+	padding-top: 5px;
+	height: 22px;
+	border-bottom: 1px solid #333;
 }
-.pane {
-	padding: 10px;
+
+ul.main > li > div:hover,
+ul.sub li:hover {
+	background: #333;
 }
-.pane ul {
+
+ul.main > li div { 
+	padding-left: 5px;
+}
+
+ul.main > li {
+	margin-top: 0px;
+	font-weight: bold;
+}
+
+ul.main > li > div:hover a {
+	color: #fb0;
+}
+
+ul.main ul {
+	padding-left: 20px;
+}
+
+ul.sub li {
+	font-weight: normal;
+	padding-left: 5px;
+}
+
+ul.sub li > i {
+	padding-left: 5px;
+	color: #606060;
+}
+
+ul {
 	list-style-type: none;
 	margin: 0px;
-	padding: 5px 0px;
 }
 
 /* Input elements */
 
 input, button {
-	font-size: 14px;
+	font-size: 15px;
 	font-family: Helvetica, Arial;
 	padding: 4px;
-	background: #17191b;
-	border: 1px solid #373a3e;
-	color: #ccc;
+	background: #191919;
+	border: 0px;
+	color: #eee;
 }
 
-input {
-	width: 96%;
+::-webkit-input-placeholder { font-style: italic; color: #606060; }
+::-moz-placeholder			{ font-style: italic; color: #888; }
+:-ms-input-placeholder		{ font-style: italic; color: #606060; }
+
+#sidebar input {
+	position: relative;
+	width: 97%;
 }
 
 button {
-	padding: 4px 8px;
-	background-image: -webkit-linear-gradient(top, #404448, #171a1c);
-	background-image: 	 -moz-linear-gradient(left, rgba(0,0,0,0.8), rgba(255,255,255,0) 70%);
-	background-image:         linear-gradient(top, rgba(0,0,0,0.8), rgba(255,255,255,0) 70%);
-	border-left: 1px solid #111;
+	margin: 0px;
+	padding: 2px;
+	border: 1px solid #333;
+	color: #555;
 }
 
 button:hover {
 	background: #171a1c;
+}
+
+button.square {
+	margin-top: -2px;
+	font-size: 14px;
+	font-family: "Courier New";
+	font-weight: bold;
+	text-align: center;
+	width: 20px;
+	height: 20px;
 }
