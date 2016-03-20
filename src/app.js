@@ -6,7 +6,10 @@ Vue.component('viewport',
 		return {
 			smallBtn: 'color:red; font-weight:bold;',
 			e_noGL: "Unable to initialize WebGL. Your browser may not support it, or it's "+
-				 "disabled in your browser settings."
+				 "disabled in your browser settings.",
+
+			componentTypes: this.$parent.componentTypes,
+			systems: this.$parent.systems
 		}
 	},
 	compiled: function()
@@ -16,6 +19,7 @@ Vue.component('viewport',
 		// Set the first Screens into motion
 
 		// Todo: Add text nodes for info output
+		console.log('components:', this.componentTypes);
 
 		if (initGL(canvas, this.e_noGL))
 		{
@@ -38,6 +42,26 @@ Vue.component('viewport',
 	template: '<canvas id="draw"><div>{{ e_noGL }}</div></canvas>'
 });
 
+/* Editable text component */
+
+Vue.component('editable', 
+{
+	data: function()
+	{
+		return {
+			textContent: 'enter your text here'
+		}
+	},
+	compiled: function()
+	{
+		// Set the first Screens into motion
+
+		// Todo: Add text nodes for info output
+	},
+	template: '<div class="textedit" contenteditable="true" spellcheck="false">'+
+		'{{ textContent }}</div>'
+});
+
 /* Main Vue instance */
 
 var vm = new Vue(
@@ -46,43 +70,47 @@ var vm = new Vue(
 	data: 
 	{
 		newItem: '',
-		todo_data: null,
-		todos: null,
-		componentTypes: []
+		comptypes_data: null,
+		system_data: null,
+
+		componentTypes: [],
+		systems: [],
+		section: 'component'
 	},
 	compiled: function()
 	{
 		var self = this;
 		var type = 0;
 
-		this.todo_data = JSON.parse(localStorage.getItem('todo_data'));
-		this.todos = (this.todo_data != null) ? this.todo_data : [
-			{ text: 'Add some todos', data: {} }
-		];
+		this.comptypes_data = JSON.parse(localStorage.getItem('component_data'));
+		this.system_data = JSON.parse(localStorage.getItem('system_data'));
 
 		// Create the componentTypes from LocalStorage
-		this.todos.forEach(function(t)
+		this.comptypes_data.forEach(function(t)
 		{
 			self.componentTypes.push(new ComponentType(t.text, ++type));
 		});
-
-		console.log(this.componentTypes);
 	},
 	methods: 
 	{
+		setView: function(view) 
+		{
+			this.section = view;
+		},
+
 		addComponent: function() 
 		{
 			var text = this.newItem.trim();
 			if (text)
 			{
-				this.todos.push({ text: text, data: {} });
+				this.comptypes_data.push({ text: text, data: {} });
 				this.newItem = '';
 				this.saveStorage();
 			}
 		},
 		removeComponent: function(index) 
 		{
-			this.todos.splice(index, 1);
+			this.comptypes_data.splice(index, 1);
 			this.saveStorage();
 		},
 
@@ -92,24 +120,24 @@ var vm = new Vue(
 			var text = this.newItem.trim();
 			if (text)
 			{
-				var cmp = this.todos[index];
+				var cmp = this.comptypes_data[index];
 				console.log(cmp.data);
 				cmp.data[text] = { }
 				cmp.data[text].type = 'type';
 
-				this.todos.splice(index, 1);
-				this.todos.push({ text: cmp.text, data: cmp.data });	
+				this.comptypes_data.splice(index, 1);
+				this.comptypes_data.push({ text: cmp.text, data: cmp.data });	
 				this.newItem = '';
 				this.saveStorage();
 			}
 
-			console.log(this.todos);
+			console.log(this.comptypes_data);
 		},
 
 		// Save data to browser's localStorage
 		saveStorage: function()
 		{
-			localStorage.setItem('todo_data', JSON.stringify(this.todos));
+			localStorage.setItem('component_data', JSON.stringify(this.comptypes_data));
 		}
 	},
 });

@@ -29,11 +29,15 @@ module.exports = function(grunt)
 			},
 
 			js: {
-				files: { 'framework.js': [
-					'src/gl.js',
-					'src/ecs/*.js',
-					'src/app.js'
-				]}
+				files: { 
+					'framework.js': [
+						'src/gl.js',
+						'src/ecs/*.js'
+					],
+					'editor.js': [ 
+						'src/app.js'
+					]
+				}
 			}
 		},
 

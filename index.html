@@ -8,29 +8,56 @@
 </body>
 	<div id="app">
 		<div id="container">
+		<header>
+			<div id="apptitle">Framework test</div>
+			<div id="title">Test Game</div>
+			<ul id="topnav">
+				<li><a :class="{ hl: section == 'component' }" v-on:click="setView('component')">Components</a></li>
+				<li><a :class="{ hl: section == 'system' }"    v-on:click="setView('system')">Systems</a></li>
+				<li><a :class="{ hl: section == 'screenElement' }" 
+					v-on:click="setView('screenElement')">ScreenElements</a></li>
+			</ul>
+		</header>
 		<section id="sidebar" style="width: 20%; height: 100%">
 			<div style="padding: 8px; padding-bottom: 0px">
-				<input v-model="newItem" v-on:keyup.enter="addComponent" placeholder="enter new Component/Property">
+				<input v-model="newItem" v-on:keyup.enter="addComponent" 
+					placeholder="enter new {{ section }}">
 			</div>
-			<ul class="main">
-				<li v-for="todo in todos">
+			<ul class="main" v-show="section == 'component'">
+				<li v-for="comptype in comptypes_data">
 					<div>
-						<a href="#{{ todo.link }}">{{ todo.text }}</a>&nbsp;
-						<button class="square" v-on:click="addSubList($index)">+</button>
-						<button class="square" v-on:click="removeComponent($index)">X</button>
+						<a><span class="batch" data-icon="&#xf01c;"></span>{{ comptype.text }}</a>&nbsp;
+						<button class="batch conf" v-on:click="addSubList($index)">&#xf14c;</button>
+						<button class="batch warn" v-on:click="removeComponent($index)">&#xf14e;</button>
 					</div>
 					<ul class="sub">
-						<li v-for="value in todo.data">{{ $key }} <i>{{ value.type }}</li></li>
+						<li v-for="value in comptype.data"><span class="batch" data-icon="&#xf0ab;"></span>
+							{{ $key }} <i>{{ value.type }}</i></li>
+					</ul>			
+				</li>
+			</ul>
+			<ul class="main" v-show="section == 'system'">
+				<li v-for="system in system_data">
+					<div>
+						<a href="#">{{ system.text }}</a>&nbsp;
+						<button class="batch conf" v-on:click="addSubList($index)">&#xf14c;</button>
+						<button class="batch warn" v-on:click="removeComponent($index)">&#xf14e;</button>
+					</div>
+					<ul class="sub">
+						<li v-for="value in system.data">{{ $key }} <i>{{ value.type }}</i></li>
 					</ul>			
 				</li>
 			</ul>
 		</section>
 		<section id="viewport" style="width: 80%; height: 100%">
-			<viewport>				
+			<viewport v-show="section == 'component'">				
 			</viewport>
+			<editable v-show="section == 'system'">				
+			</editable>
 		</section>
 	</div>
-	<script src="lib/vue.min.js"></script>
+	<script src="lib/vue.js"></script>
 	<script src="framework.js"></script>
+	<script src="editor.js"></script>
 </body>
 </html>
