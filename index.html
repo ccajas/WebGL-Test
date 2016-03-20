@@ -10,25 +10,24 @@
 		<div id="container">
 		<header>
 			<div id="apptitle">Framework test</div>
-			<div id="title">Test Game</div>
+			<div id="title">Test</div>
 			<ul id="topnav">
-				<li><a :class="{ hl: section == 'component' }" v-on:click="setView('component')">Components</a></li>
-				<li><a :class="{ hl: section == 'system' }"    v-on:click="setView('system')">Systems</a></li>
-				<li><a :class="{ hl: section == 'screenElement' }" 
-					v-on:click="setView('screenElement')">ScreenElements</a></li>
+				<li v-for="s in sections">
+					<a :class="{ hl: section == s }" v-on:click="setView(s)">{{ s }}s</a>
+				</li>
 			</ul>
 		</header>
 		<section id="sidebar" style="width: 20%; height: 100%">
 			<div style="padding: 8px; padding-bottom: 0px">
-				<input v-model="newItem" v-on:keyup.enter="addComponent" 
+				<input v-model="newItem" v-on:keyup.enter="addItem" 
 					placeholder="enter new {{ section }}">
 			</div>
-			<ul class="main" v-show="section == 'component'">
-				<li v-for="comptype in comptypes_data">
+			<ul class="main" v-show="section == 'Component'">
+				<li v-for="comptype in component_data">
 					<div>
 						<a><span class="batch" data-icon="&#xf01c;"></span>{{ comptype.text }}</a>&nbsp;
-						<button class="batch conf" v-on:click="addSubList($index)">&#xf14c;</button>
-						<button class="batch warn" v-on:click="removeComponent($index)">&#xf14e;</button>
+						<button class="batch conf" v-on:click="addSubItem($index)">&#xf14c;</button>
+						<button class="batch warn" v-on:click="removeItem($index)">&#xf14e;</button>
 					</div>
 					<ul class="sub">
 						<li v-for="value in comptype.data"><span class="batch" data-icon="&#xf0ab;"></span>
@@ -36,7 +35,7 @@
 					</ul>			
 				</li>
 			</ul>
-			<ul class="main" v-show="section == 'system'">
+			<ul class="main" v-show="section == 'System'">
 				<li v-for="system in system_data">
 					<div>
 						<a href="#">{{ system.text }}</a>&nbsp;
@@ -50,14 +49,20 @@
 			</ul>
 		</section>
 		<section id="viewport" style="width: 80%; height: 100%">
-			<viewport v-show="section == 'component'">				
+			<viewport v-show="section == 'Component'">				
 			</viewport>
-			<editable v-show="section == 'system'">				
+			<editable v-show="section == 'System'">				
 			</editable>
 		</section>
 	</div>
 	<script src="lib/vue.js"></script>
 	<script src="framework.js"></script>
 	<script src="editor.js"></script>
+	<script src="http://ajaxorg.github.io/ace-builds/src-noconflict/mode-javascript.js"></script>
+	<script>
+    	var editor = ace.edit("editable");
+    	editor.setTheme("ace/theme/twilight");
+    	editor.session.setMode("ace/mode/javascript");
+	</script>
 </body>
 </html>

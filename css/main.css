@@ -1,3 +1,6 @@
+@import url(https://fonts.googleapis.com/css?family=Noto+Sans:400,400italic);
+@import url(https://fonts.googleapis.com/css?family=Arimo:400italic,400,700);
+
 @font-face {
     font-family:Batch;
     src:url('fonts/batch.eot');
@@ -17,8 +20,9 @@ html, body {
 	height: 100%;
 }
 body { 
-	font-family: Helvetica, Arial, "Sans-Serif";
-	font-size: 14px;
+	font-family: 'Arimo', Helvetica, Arial, Sans-Serif;
+	font-size: 13px;
+	letter-spacing: 0.03em;
 	background: #272727;
 	color: #eee;
 }
@@ -152,13 +156,15 @@ li, li > div {
 	color: #777;
 }
 
+#topnav li a:hover {
+	cursor: pointer;
+	background: #272727;
+	color: #ccc;
+}
+
 #topnav li a.hl {
 	background: #272727;
 	color: #fb0;
-}
-
-#topnav li a:hover {
-	cursor: pointer;
 }
 
 ul.main {
@@ -175,10 +181,11 @@ ul.sub li {
 ul.main > li > div:hover,
 ul.sub li:hover {
 	background: #333;
+	cursor: pointer;
 }
 
-ul.main > li div { 
-	padding-left: 5px;
+ul.main > li > div { 
+	padding: 1px 5px 4px 0px;
 }
 
 ul.main > li {
@@ -213,11 +220,12 @@ ul {
 
 input, button {
 	font-size: 1em;
-	font-family: Helvetica, Arial;
+	font-family: 'Arimo', Helvetica, Arial;
 	padding: 4px;
 	background: #191919;
 	border: 0px;
 	color: #eee;
+	outline: 0px solid transparent;
 }
 
 ::-webkit-input-placeholder { font-style: italic; color: #606060; }
@@ -251,7 +259,7 @@ button.square {
 }
 
 button.batch {
-	margin: -3px 0px 0px 0px;
+	margin-top: 2px;
 	padding: 0px;
 	width: 16px;
 	font-size: 16px;
