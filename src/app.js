@@ -21,16 +21,23 @@ Vue.component('viewport',
 		// Todo: Add text nodes for info output
 		console.log('components:', this.componentTypes);
 
+		// Set up the System Manager
+		var componentLists = [];
+		var systemMgr = new SystemManager(componentLists);
+
+		// Set timer and update
+		startTime = new Date();
+		lastFrame = Date.now();
+
+		//this.update(canvas);
+		console.log('GL is loaded');
+
+		if (componentLists.length < 1)
+			console.log('No component lists found!');
+
 		if (initGL(canvas, this.e_noGL))
 		{
 			// TODO: Initialize first screen
-
-			// Set timer and update
-			startTime = new Date();
-			lastFrame = Date.now();
-
-			//this.update(canvas);
-			console.log('GL is loaded');
 
 			// Clear screen and set Z-buffer
 			gl.clearColor(0.11, 0.11, 0.11, 1.0);
@@ -70,23 +77,31 @@ var vm = new Vue(
 	data: 
 	{
 		newItem: '',
-		comptypes_data: null,
+		component_data: null,
 		system_data: null,
 
 		componentTypes: [],
 		systems: [],
-		section: 'component'
+		section: '',
+		sections: ['Component','System','ScreenElement','EntityTemplate']
 	},
 	compiled: function()
 	{
 		var self = this;
-		var type = 0;
 
-		this.comptypes_data = JSON.parse(localStorage.getItem('component_data'));
-		this.system_data = JSON.parse(localStorage.getItem('system_data'));
+		// Set initial component type and section
+		var type = 0;
+		this.section = this.sections[0];
+
+		// Setup data groups
+		this.component_data = JSON.parse(localStorage.getItem('component_data')) || [];
+		this.system_data        = JSON.parse(localStorage.getItem('system_data'))    || [];
+
+		// Reference for the current data being managed
+		this.section_data = this[this.section.toLowerCase() + '_data'];
 
 		// Create the componentTypes from LocalStorage
-		this.comptypes_data.forEach(function(t)
+		this.component_data.forEach(function(t)
 		{
 			self.componentTypes.push(new ComponentType(t.text, ++type));
 		});
@@ -96,48 +111,48 @@ var vm = new Vue(
 		setView: function(view) 
 		{
 			this.section = view;
+			this.section_data = this[view.toLowerCase() + '_data'];
 		},
 
-		addComponent: function() 
+		addItem: function() 
 		{
 			var text = this.newItem.trim();
 			if (text)
 			{
-				this.comptypes_data.push({ text: text, data: {} });
+				this.section_data.push({ text: text, data: {} });
 				this.newItem = '';
 				this.saveStorage();
 			}
 		},
-		removeComponent: function(index) 
+		removeItem: function(index) 
 		{
-			this.comptypes_data.splice(index, 1);
+			this.section_data.splice(index, 1);
 			this.saveStorage();
 		},
 
-		// Sub lists for extra data
-		addSubList: function(index)
+		// Sub items for extra data
+		addSubItem: function(index)
 		{
 			var text = this.newItem.trim();
 			if (text)
 			{
-				var cmp = this.comptypes_data[index];
+				var cmp = this.section_data[index];
 				console.log(cmp.data);
 				cmp.data[text] = { }
 				cmp.data[text].type = 'type';
 
-				this.comptypes_data.splice(index, 1);
-				this.comptypes_data.push({ text: cmp.text, data: cmp.data });	
+				this.section_data.splice(index, 1);
+				this.section_data.push({ text: cmp.text, data: cmp.data });	
 				this.newItem = '';
 				this.saveStorage();
 			}
-
-			console.log(this.comptypes_data);
 		},
 
 		// Save data to browser's localStorage
 		saveStorage: function()
 		{
-			localStorage.setItem('component_data', JSON.stringify(this.comptypes_data));
+			localStorage.setItem('component_data', JSON.stringify(this.component_data));
+			localStorage.setItem('system_data',    JSON.stringify(this.system_data));
 		}
 	},
 });

@@ -2,10 +2,10 @@
 /**
  * A manager for all Components
  * @class
- * @name ComponentManager
+ * @name ComponentMgr
  */
 
-ComponentManager = (function()
+ComponentMgr = (function()
 {
 	'use strict';
 
@@ -17,23 +17,23 @@ ComponentManager = (function()
 	var entityTemplates = {};
 
 	/**
-	 * ComponentManager constructor
+	 * ComponentMgr constructor
 	 *
 	 * @function
-	 * @memberOf ComponentManager
+	 * @memberOf ComponentMgr
 	 */
-	var ComponentManager = {}
+	function ComponentMgr() {}
 
 	/**
 	 * Wrapper to add entity templates
 	 *
 	 * @function
-	 * @memberOf ComponentManager
+	 * @memberOf ComponentMgr
 	 * @param {String} templateName name of the template
 	 * @param {EntityTemplate} template entity template
 	 */
 
-	ComponentManager.addEntityTemplate = function(templateName, template)
+	ComponentMgr.addEntityTemplate = function(templateName, template)
 	{
 		entityTemplates.push({ name: templateName, template: template });
 	}
@@ -42,13 +42,13 @@ ComponentManager = (function()
 	 * Create entity from a template from its name
 	 *
 	 * @function
-	 * @memberOf ComponentManager
+	 * @memberOf ComponentMgr
 	 * @param {String|EntityTemplate} templateName name of the template, 
 	 * or an EntityTemplate to create from
 	 * @return [Object] the new entity, if created from a template name
 	 */
 
-	ComponentManager.createEntityFromTemplate = function(templateName)
+	ComponentMgr.createEntityFromTemplate = function(templateName)
 	{
 		// Create from the template's name
 		if (typeof templateName === 'string')
@@ -87,11 +87,11 @@ ComponentManager = (function()
 	 * Disable an entity's Components by its ID
 	 *
 	 * @function
-	 * @memberOf ComponentManager
+	 * @memberOf ComponentMgr
 	 * @param {number} entityID the entity's ID
 	 */
 
-	ComponentManager.disableEntity = function(entityID)
+	ComponentMgr.disableEntity = function(entityID)
 	{
 		// Check every list for proper updating
 		for (cmpArray in components.groups)
@@ -105,10 +105,10 @@ ComponentManager = (function()
 	 * Remove entities that no longer have any live Components
 	 *
 	 * @function
-	 * @memberOf ComponentManager
+	 * @memberOf ComponentMgr
 	 */
 
-	ComponentManager.removeEntities = function()
+	ComponentMgr.removeEntities = function()
 	{
 		var total = next;
 
@@ -144,13 +144,13 @@ ComponentManager = (function()
 		// Finished removing entities
 	}
 
-	return ComponentManager;
+	return ComponentMgr;
 
 })();
 
 /**
-* Aliases for {@link ComponentManager}
+* Aliases for {@link ComponentMgr}
 * @class
 */
 
-ComponentMgr = ComponentManager;
+ComponentManager = ComponentMgr;
