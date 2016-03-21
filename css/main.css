@@ -1,12 +1,11 @@
-@import url(https://fonts.googleapis.com/css?family=Noto+Sans:400,400italic);
-@import url(https://fonts.googleapis.com/css?family=Arimo:400italic,400,700);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,600);
+@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:500);
 
 @font-face {
     font-family:Batch;
     src:url('fonts/batch.eot');
     src:url('fonts/batch.eot?#iefix') format('embedded-opentype'),
-		url('fonts/batch.woff') format('woff'),
-		url('fonts/batch.ttf') format('truetype');
+		url('fonts/batch.woff') format('woff');
     font-weight:normal;
     font-style:normal;
 }
@@ -20,15 +19,21 @@ html, body {
 	height: 100%;
 }
 body { 
-	font-family: 'Arimo', Helvetica, Arial, Sans-Serif;
+	font-family: 'Open Sans', Helvetica, Arial, Sans-Serif;
 	font-size: 13px;
-	letter-spacing: 0.03em;
 	background: #272727;
 	color: #eee;
 }
 a {
 	text-decoration: none;
 	color: #eee;
+}
+pre {
+	margin: 0px;
+	padding: 0px;
+	font-family: Consolas, "monospace";
+	font-size: 1em;
+	line-height: 1.2em;
 }
 
 #app {
@@ -45,14 +50,14 @@ header {
     overflow: auto;
     overflow-y: hidden;
     width: 100%;
-	height: 34px;
+	height: 36px;
 	background: #111;
 	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 header #app-title {
 	padding: 0px 10px;
-	font-family: "Ubuntu mono", monospace;
+	font-family: Consolas, "monospace";
 	font-size: 3em;
 	font-style: italic;
 	font-weight: bold;
@@ -70,19 +75,19 @@ header #title {
 	color: #ccc;
 }
 
-canvas, .textedit {
+canvas {
 	width: 100%;
 	height: 100%;
 	background: #1c1c1c;
 }
 
 #container {
-	top: 34px;
+	top: 36px;
 	min-height: 100%;
 	position: relative;
 }
 
-#sidebar, #viewport, #textedit {
+#sidebar, #viewport {
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
@@ -97,15 +102,15 @@ canvas, .textedit {
 
 /* Scrollbar */
 
-::-webkit-scrollbar {
+::-moz-scrollbar {
     width: 16px;
 	background-color: #272727;
 	color: #aaa;
 }
-::-webkit-scrollbar-thumb {
-	border: 2px solid #272727;
-    background-clip: padding-box;
-    background-color: #141414;
+::-webkit-scrollbar {
+    width: 16px;
+	background-color: #272727;
+	color: #aaa;
 }
 
 /* Batch icons font */
@@ -181,8 +186,8 @@ li, li > div {
 }
 
 #section-nav li a {
-	padding: 20px 16px;
-	font-size: 1.5em;
+	padding: 16px 16px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -248,7 +253,7 @@ ul {
 
 input, button {
 	font-size: 1em;
-	font-family: 'Arimo', Helvetica, Arial;
+	font-family: 'Open Sans', Helvetica, Arial;
 	padding: 4px;
 	background: #191919;
 	border: 0px;
@@ -309,14 +314,31 @@ button.batch.warn:hover {
 	color: #f77;
 }
 
-div[contenteditable="true"] {
-	font-family: monospace;
-	font-size: 1.2em;
-	line-height: 1.33em;
+pre[contenteditable="true"] {
+	font-family: Consolas, "monospace", "Courier New";
+	font-size: 1.1em;
+	line-height: 1.2em;
 	outline: 0px solid transparent;
 }
 
-div.textedit {
-	padding: 2px 5px;
+.textedit {
+	position: absolute;
+	z-index: 10;
+	left: 8px;
+	top: 18px;
+	min-width: 40%;
+}
+
+.textedit h4 {
+	display: inline;
+	padding: 10px 12px;
+	font-size: 1.1em;
+	background: #272727;
+}
+
+.textedit pre {
+	margin-top: 8px;
+	padding: 8px;
+	background: #272727;
 	color: #777;
 }

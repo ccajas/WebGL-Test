@@ -4,10 +4,6 @@ Vue.component('viewport',
 	data: function()
 	{
 		return {
-			smallBtn: 'color:red; font-weight:bold;',
-			e_noGL: "Unable to initialize WebGL. Your browser may not support it, or it's "+
-				 "disabled in your browser settings.",
-
 			componentTypes: this.$parent.componentTypes,
 			systems: this.$parent.systems
 		}
@@ -38,20 +34,37 @@ Vue.component('viewport',
 
 Vue.component('editable', 
 {
-	data: function()
-	{
-		return {
-			textContent: 'enter your text here'
-		}
-	},
+	props:['textContent'],
 	compiled: function()
 	{
 		// Set the first Screens into motion
 
 		// Todo: Add text nodes for info output
+		console.log(this.$el);
+
+		this.$el.onkeydown = function(e)
+		{
+			if (e.keyCode == 9)
+			{
+				document.execCommand('styleWithCSS', true, null);
+				document.execCommand('indent', true, null);
+				e.preventDefault();
+			}
+		}
 	},
-	template: '<div class="textedit" contenteditable="true" spellcheck="false">'+
-		'{{ textContent }}</div>'
+	template: '<div class="textedit"><h4>Code Editor</h4>'+
+		'<pre contenteditable="true" spellcheck="false">{{ textContent }}</pre></div>',
+
+	// Re-update syntax highligt
+	watch:
+	{
+		textContent: function()
+		{
+			console.log(this.textContent);
+			console.log('text updated');
+			Prism.highlightAll();
+		}
+	}
 });
 
 /* Main Vue instance */
@@ -64,6 +77,10 @@ var vm = new Vue(
 		newItem: '',
 		component_data: null,
 		system_data: null,
+
+		// Editable text area
+		view_editor: false,
+		editable_text: 'Add your text here!',
 
 		// Data for ECS
 		componentTypes: [],
@@ -89,7 +106,7 @@ var vm = new Vue(
 		this.system_data    = JSON.parse(localStorage.getItem('system_data'))    || [];
 
 		// Reference for the current data being managed
-		this.section_data = this[this.section.text.toLowerCase() + '_data'];
+		this.section_data = this[this.section.toLowerCase() + '_data'];
 
 		// Create the componentTypes from LocalStorage
 		this.component_data.forEach(function(t)
@@ -105,17 +122,20 @@ var vm = new Vue(
 			this.section_data = this[view.text.toLowerCase() + '_data'];
 		},
 
+		// Add item to the root level
 		addItem: function() 
 		{
 			var text = this.newItem.trim();
 			if (text)
 			{
 				var nextType = this.section_data.length + 1;
-				this.section_data.push({ text: text, type: nextType, data: {} });
+				this.section_data.push({ name: text, type: nextType, data: {} });
 				this.newItem = '';
 				this.saveStorage(this.section_data);
 			}
 		},
+
+		// Remove an item from the root level
 		removeItem: function(index) 
 		{
 			this.section_data.splice(index, 1);
@@ -128,16 +148,30 @@ var vm = new Vue(
 			var text = this.newItem.trim();
 			if (text)
 			{
-				var cmp = this.section_data[index];
+				var cmp  = this.section_data[index];
+				var type = cmp.type;
+
 				console.log(cmp.data);
 				cmp.data[text] = { }
 				cmp.data[text].type = 'type';
 
+				// Replace the sub-item data
 				this.section_data.splice(index, 1);
-				this.section_data.push({ text: cmp.text, data: cmp.data });	
+				this.section_data.push({ name: cmp.name, type: type, data: cmp.data });	
 				this.newItem = '';
 				this.saveStorage(this.section_data);
 			}
+		},
+
+		// View JSON code from item
+		viewJSON: function(index)
+		{
+			this.view_editor = true;
+
+			// Format the text to be more readable
+			var text = JSON.stringify(this.section_data[index], null, 4);
+			this.editable_text = '';
+			this.editable_text = text;
 		},
 
 		// Save data to browser's localStorage

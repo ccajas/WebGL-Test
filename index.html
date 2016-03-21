@@ -4,6 +4,7 @@
 	<title>WebGL test</title>
 	<meta charset="utf-8"/>
 	<link rel="stylesheet" href="css/main.css" />
+	<link rel="stylesheet" href="css/prism.css" />
 </head>
 </body>
 	<div id="app">
@@ -31,8 +32,8 @@
 			</div>
 			<ul class="main" v-show="section == 'Component'">
 				<li v-for="comptype in component_data">
-					<div>
-						<a><span class="batch" data-icon="&#xf01c;"></span>{{ comptype.text }}</a>&nbsp;
+					<div v-on:click="viewJSON($index)">
+						<a><span class="batch" data-icon="&#xf01c;"></span>{{ comptype.name }}</a>&nbsp;
 						<button class="batch conf" v-on:click="addSubItem($index)">&#xf14c;</button>
 						<button class="batch warn" v-on:click="removeItem($index)">&#xf14e;</button>
 					</div>
@@ -44,8 +45,8 @@
 			</ul>
 			<ul class="main" v-show="section == 'System'">
 				<li v-for="system in system_data">
-					<div>
-						<a><span class="batch" data-icon="&#xf04c;"></span>{{ system.text }}</a>&nbsp;
+					<div v-on:click="viewJSON($index)">
+						<a><span class="batch" data-icon="&#xf04c;"></span>{{ system.name }}</a>&nbsp;
 						<button class="batch conf" v-on:click="addSubItem($index)">&#xf14c;</button>
 						<button class="batch warn" v-on:click="removeItem($index)">&#xf14e;</button>
 					</div>
@@ -56,20 +57,14 @@
 			</ul>
 		</section>
 		<section id="viewport" style="width: 80%; height: 100%">
-			<viewport v-show="section == 'Component'">				
-			</viewport>
-			<editable v-show="section == 'System'">				
+			<viewport></viewport>
+			<editable v-show="view_editor == true" :text-content="editable_text">				
 			</editable>
 		</section>
 	</div>
 	<script src="lib/vue.js"></script>
+	<script src="lib/prism.js"></script>
 	<script src="framework.js"></script>
 	<script src="editor.js"></script>
-	<!--<script src="http://ajaxorg.github.io/ace-builds/src-noconflict/mode-javascript.js"></script>
-	<script>
-    	var editor = ace.edit("editable");
-    	editor.setTheme("ace/theme/twilight");
-    	editor.session.setMode("ace/mode/javascript");
-	</script>-->
 </body>
 </html>

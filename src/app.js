@@ -78,11 +78,17 @@ App = (function()
 			// Update current time
 			elapsed = (Date.now() - lastFrame) / 1000;
 			lastFrame = Date.now();
+			var time = lastFrame / 5000;
 
 			// Check for screen
             if (currentScreen == null)
             {
                 // Something went wrong
+                // Show purple screen of doom
+				gl.clearColor(0.11, 0.11, 0.11, 1.0);
+				gl.enable(gl.DEPTH_TEST);
+				gl.depthFunc(gl.LEQUAL);
+				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             }
             // Update screens
             else
