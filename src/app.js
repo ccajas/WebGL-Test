@@ -1,158 +1,108 @@
 
-Vue.component('viewport', 
+/**
+ * @class Main application
+ * @name App
+ */
+
+App = (function()
 {
-	data: function()
+	'use strict';
+
+	function App(canvas)
 	{
-		return {
-			smallBtn: 'color:red; font-weight:bold;',
-			e_noGL: "Unable to initialize WebGL. Your browser may not support it, or it's "+
-				 "disabled in your browser settings.",
+		this.init(canvas);
+	}
 
-			componentTypes: this.$parent.componentTypes,
-			systems: this.$parent.systems
-		}
-	},
-	compiled: function()
+	// Internal variables
+	var startTime,
+		elapsed,
+		lastFrame;
+
+	// Screen handling
+	var currentScreen,
+		nextScreen;
+
+	// GL error messages
+	var e_noGL = "Unable to initialize WebGL. Your browser may not support it, or it's "+
+				 "disabled in your browser settings.";
+
+	// Mouse events
+
+	// Only detect mouse movement when button is pressed
+/*
+	App.onMouseMove = function(event) 
 	{
-		console.log('Viewport loaded');
-		var canvas = this.$el;
-		// Set the first Screens into motion
+		if (!mouseDown) return;
 
-		// Todo: Add text nodes for info output
-		console.log('components:', this.componentTypes);
+		var newX = event.clientX;
+		var newY = event.clientY;
 
-		// Set up the System Manager
-		var componentLists = [];
-		var systemMgr = new SystemManager(componentLists);
+		thetaX += (newX - lastMouseX) / (m.PI * 90);
+		thetaY += (newY - lastMouseY) / (m.PI * 60);
 
-		// Set timer and update
-		startTime = new Date();
-		lastFrame = Date.now();
+		lastMouseX = newX;
+		lastMouseY = newY;
+	}*/
 
-		//this.update(canvas);
-		console.log('GL is loaded');
-
-		if (componentLists.length < 1)
-			console.log('No component lists found!');
-
-		if (initGL(canvas, this.e_noGL))
+	App.prototype =
+	{
+		init: function(canvas) 
 		{
-			// TODO: Initialize first screen
+			var canvas = canvas || document.getElementById("draw");
 
-			// Clear screen and set Z-buffer
-			gl.clearColor(0.11, 0.11, 0.11, 1.0);
-			gl.enable(gl.DEPTH_TEST);
-			gl.depthFunc(gl.LEQUAL);
-			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		}
-	},
-	template: '<canvas id="draw"><div>{{ e_noGL }}</div></canvas>'
-});
+			// Set the first Screens into motion
+			//var screen = new InputScreen(null, 'screen 1');
+			//var screen2 = new InputScreen(null, 'screen 2');
 
-/* Editable text component */
-
-Vue.component('editable', 
-{
-	data: function()
-	{
-		return {
-			textContent: 'enter your text here'
-		}
-	},
-	compiled: function()
-	{
-		// Set the first Screens into motion
-
-		// Todo: Add text nodes for info output
-	},
-	template: '<div class="textedit" contenteditable="true" spellcheck="false">'+
-		'{{ textContent }}</div>'
-});
-
-/* Main Vue instance */
-
-var vm = new Vue(
-{
-	el: '#app',
-	data: 
-	{
-		newItem: '',
-		component_data: null,
-		system_data: null,
-
-		componentTypes: [],
-		systems: [],
-		section: '',
-		sections: ['Component','System','ScreenElement','EntityTemplate']
-	},
-	compiled: function()
-	{
-		var self = this;
-
-		// Set initial component type and section
-		var type = 0;
-		this.section = this.sections[0];
-
-		// Setup data groups
-		this.component_data = JSON.parse(localStorage.getItem('component_data')) || [];
-		this.system_data        = JSON.parse(localStorage.getItem('system_data'))    || [];
-
-		// Reference for the current data being managed
-		this.section_data = this[this.section.toLowerCase() + '_data'];
-
-		// Create the componentTypes from LocalStorage
-		this.component_data.forEach(function(t)
-		{
-			self.componentTypes.push(new ComponentType(t.text, ++type));
-		});
-	},
-	methods: 
-	{
-		setView: function(view) 
-		{
-			this.section = view;
-			this.section_data = this[view.toLowerCase() + '_data'];
-		},
-
-		addItem: function() 
-		{
-			var text = this.newItem.trim();
-			if (text)
+			// Add text nodes for info output
+			//infoEl.appendChild(infoNode);
+			
+			if (initGL(canvas, e_noGL))
 			{
-				this.section_data.push({ text: text, data: {} });
-				this.newItem = '';
-				this.saveStorage();
-			}
-		},
-		removeItem: function(index) 
-		{
-			this.section_data.splice(index, 1);
-			this.saveStorage();
-		},
+				// Initialize first screen
+				//currentScreen = new TestScreen(null, 'a test screen');
+				console.log('GL is loaded');
 
-		// Sub items for extra data
-		addSubItem: function(index)
-		{
-			var text = this.newItem.trim();
-			if (text)
-			{
-				var cmp = this.section_data[index];
-				console.log(cmp.data);
-				cmp.data[text] = { }
-				cmp.data[text].type = 'type';
-
-				this.section_data.splice(index, 1);
-				this.section_data.push({ text: cmp.text, data: cmp.data });	
-				this.newItem = '';
-				this.saveStorage();
+				// Set timer and update
+				startTime = new Date();
+				lastFrame = Date.now();
+				
+				this.update(canvas);
 			}
 		},
 
-		// Save data to browser's localStorage
-		saveStorage: function()
+		// Draw the scene
+
+		update: function(canvas)
 		{
-			localStorage.setItem('component_data', JSON.stringify(this.component_data));
-			localStorage.setItem('system_data',    JSON.stringify(this.system_data));
+			// Update current time
+			elapsed = (Date.now() - lastFrame) / 1000;
+			lastFrame = Date.now();
+
+			// Check for screen
+            if (currentScreen == null)
+            {
+                // Something went wrong
+            }
+            // Update screens
+            else
+                nextScreen = currentScreen.update(elapsed, canvas);
+
+            // Swap screen for the next frame
+            if (nextScreen != currentScreen)
+                currentScreen = nextScreen;
+
+            // Get next frame
+			var self = this;
+			requestAnimationFrame(function animFrame() {
+				self.update(canvas);
+			});
 		}
-	},
-});
+	}
+
+	return App;
+
+})();
+
+// Start the application
+//var app = new App();

@@ -32,10 +32,11 @@ module.exports = function(grunt)
 				files: { 
 					'framework.js': [
 						'src/gl.js',
-						'src/ecs/*.js'
+						'src/ecs/*.js',
+						'src/app.js'
 					],
 					'editor.js': [ 
-						'src/app.js'
+						'src/editor.js'
 					]
 				}
 			}
