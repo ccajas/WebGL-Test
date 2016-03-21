@@ -14,51 +14,46 @@
 			<div id="title">Test</div>
 			<ul id="topnav">
 				<li v-for="s in sections">
-					<a :class="{ hl: section == s.text }" v-on:click="setView(s)">{{ s.text }}s</a>
+					<a :class="{ hl: curr_section == s.text }" v-on:click="setView(s)">{{ s.text }}s</a>
 				</li>
 			</ul>
 		</header>
 		<section id="sidebar" style="width: 20%; height: 100%">
 			<ul id="section-nav">
 				<li v-for="s in sections">
-					<a :class="{ hl: section == s.text }" v-on:click="setView(s)">
+					<a :class="{ hl: curr_section == s.text }" v-on:click="setView(s)">
 						<span class="batch">{{{ s.icon }}}</span>
 					</a>
 				</li>
 			</ul>
 			<div style="padding: 8px; padding-bottom: 0px">
 				<input v-model="newItem" v-on:keyup.enter="addItem" 
-					placeholder="enter new {{ section }}">
+					placeholder="enter new {{ curr_section }}">
 			</div>
-			<ul class="main" v-show="section == 'Component'">
-				<li v-for="comptype in component_data">
+			<ul class="main">
+				<li v-for="sdata in section_data">
 					<div v-on:click="viewJSON($index)">
-						<a><span class="batch" data-icon="&#xf01c;"></span>{{ comptype.name }}</a>&nbsp;
+						<a><span class="batch">{{{ curr_icon }}}</span>{{ sdata.name }}</a>&nbsp;
 						<button class="batch conf" v-on:click="addSubItem($index)">&#xf14c;</button>
 						<button class="batch warn" v-on:click="removeItem($index)">&#xf14e;</button>
 					</div>
 					<ul class="sub">
-						<li v-for="value in comptype.data"><span class="batch" data-icon="&#xf0ab;"></span>
+						<li v-for="value in sdata.data"><span class="batch" data-icon="&#xf0ab;"></span>
 							{{ $key }} <i>{{ value.type }}</i></li>
-					</ul>			
-				</li>
-			</ul>
-			<ul class="main" v-show="section == 'System'">
-				<li v-for="system in system_data">
-					<div v-on:click="viewJSON($index)">
-						<a><span class="batch" data-icon="&#xf04c;"></span>{{ system.name }}</a>&nbsp;
-						<button class="batch conf" v-on:click="addSubItem($index)">&#xf14c;</button>
-						<button class="batch warn" v-on:click="removeItem($index)">&#xf14e;</button>
-					</div>
-					<ul class="sub">
-						<li v-for="value in system.data">{{ $key }} <i>{{ value.type }}</i></li>
 					</ul>			
 				</li>
 			</ul>
 		</section>
 		<section id="viewport" style="width: 80%; height: 100%">
 			<viewport></viewport>
-			<editable v-show="view_editor == true" :text-content="editable_text">				
+			<editable :text-content="editorText" :viewable="viewEditor" inline-template>
+				<div class="textedit" v-if="viewable">
+					<h4>Code Editor</h4>
+					<code>
+						<pre spellcheck="false" 
+						contenteditable="{{ viewable }}" class="language-json">{{ textContent }}</pre>
+					</code>
+				</div>			
 			</editable>
 		</section>
 	</div>

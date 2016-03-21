@@ -1,4 +1,6 @@
 
+Vue.config.debug = true;
+
 Vue.component('viewport', 
 {
 	data: function()
@@ -15,7 +17,7 @@ Vue.component('viewport',
 		// Set the first Screens into motion
 
 		// Todo: Add text nodes for info output
-		console.log('components:', this.componentTypes);
+		//console.log('components:', this.componentTypes);
 
 		// Set up the System Manager
 		var componentLists = [];
@@ -34,7 +36,7 @@ Vue.component('viewport',
 
 Vue.component('editable', 
 {
-	props:['textContent'],
+	props:['textContent','viewable'],
 	compiled: function()
 	{
 		// Set the first Screens into motion
@@ -46,14 +48,12 @@ Vue.component('editable',
 		{
 			if (e.keyCode == 9)
 			{
-				document.execCommand('styleWithCSS', true, null);
+				document.execCommand('styleWithCSS', false, null);
 				document.execCommand('indent', true, null);
 				e.preventDefault();
 			}
 		}
 	},
-	template: '<div class="textedit"><h4>Code Editor</h4>'+
-		'<pre contenteditable="true" spellcheck="false">{{ textContent }}</pre></div>',
 
 	// Re-update syntax highligt
 	watch:
@@ -61,7 +61,6 @@ Vue.component('editable',
 		textContent: function()
 		{
 			console.log(this.textContent);
-			console.log('text updated');
 			Prism.highlightAll();
 		}
 	}
@@ -79,8 +78,8 @@ var vm = new Vue(
 		system_data: null,
 
 		// Editable text area
-		view_editor: false,
-		editable_text: 'Add your text here!',
+		viewEditor: false,
+		editorText: 'Add your text here!',
 
 		// Data for ECS
 		componentTypes: [],
@@ -91,7 +90,10 @@ var vm = new Vue(
 			{text: 'System', 		 icon: '&#xf04c;'},
 			{text: 'EntityTemplate', icon: '&#xf020;'},
 			{text: 'ScreenElement',  icon: '&#xf11e;'}
-		]
+		],
+		section_data: null,
+		curr_section: null,
+		curr_icon: null,
 	},
 	compiled: function()
 	{
@@ -99,14 +101,16 @@ var vm = new Vue(
 
 		// Set initial component type and section
 		var type = 0;
-		this.section = this.sections[0].text;
+		this.curr_section = this.sections[0].text;
+		this.curr_icon    = this.sections[0].icon;
 
 		// Setup data groups
 		this.component_data = JSON.parse(localStorage.getItem('component_data')) || [];
 		this.system_data    = JSON.parse(localStorage.getItem('system_data'))    || [];
 
 		// Reference for the current data being managed
-		this.section_data = this[this.section.toLowerCase() + '_data'];
+		this.section_data = this[this.curr_section.toLowerCase() + '_data'];
+		console.log(this.section_data);
 
 		// Create the componentTypes from LocalStorage
 		this.component_data.forEach(function(t)
@@ -118,7 +122,8 @@ var vm = new Vue(
 	{
 		setView: function(view) 
 		{
-			this.section = view.text;
+			this.curr_section = view.text;
+			this.curr_icon	  = view.icon;
 			this.section_data = this[view.text.toLowerCase() + '_data'];
 		},
 
@@ -166,12 +171,11 @@ var vm = new Vue(
 		// View JSON code from item
 		viewJSON: function(index)
 		{
-			this.view_editor = true;
+			this.viewEditor = true;
 
 			// Format the text to be more readable
 			var text = JSON.stringify(this.section_data[index], null, 4);
-			this.editable_text = '';
-			this.editable_text = text;
+			this.editorText = text;
 		},
 
 		// Save data to browser's localStorage
