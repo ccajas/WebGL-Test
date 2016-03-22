@@ -32,8 +32,26 @@
 						placeholder="enter new {{ section.text }}"/>
 				</div>
 				<ul class="hierarchy">
-					<li v-for="sdata in section_data">
-						<div v-on:click="viewCode($index)" :class="{ hl: currIndex == $index }">
+					<li v-for="item in section_data">
+						<listitem :item="item" :section="section" inline-template>
+							<div v-on:click="viewDetail">
+								<span class="batch">{{{ section.icon }}}</span>{{ item.name }}
+							</div>
+							<ul class="sub">
+								<!-- subitems as object values -->
+								<li v-for="subitem in item.data">
+									<listitem :item="subitem" :key="$key" inline-template>
+										<div v-on:click="viewDetail">
+											<span class="batch" data-icon="&#xf0ab;"></span>
+											{{ key }} <i>{{ value }}</i>
+										</div>
+									</listitem>
+								</li>
+							</ul>
+						</listitem>
+
+						<!--</sdata>
+						<div v-on:click="viewDetail($index)" :class="{ hl: currIndex == $index }">
 							<a :style="{ color: currIndex == $index ? section.color : '#ccc' }">
 								<span class="batch">{{{ section.icon }}}</span>{{ sdata.name }}
 							</a>&nbsp;
@@ -45,20 +63,22 @@
 								<span class="batch" data-icon="&#xf0ab;"></span>
 								{{ $key }} <i>{{ value.type }}</i>
 							</li>
-						</ul>			
+						</ul>-->
 					</li>
 				</ul>
-				<div class="bottom" v-show="currIndex >= 0">
-					<h4>{{ section.text }} Details</h4>
-					<ul>
-						<li v-for="value in tl_data">
-							<div class="left">{{ $key }}</div>
-							<div class="right input-w">
-								<input v-model="value"/>
-							</div>
-						</li>
-					</ul>
-				</div>
+				<detailview :data="selectedData">
+					<div class="bottom" v-show="currIndex >= 0">
+						<h4>{{ section.text }} Details</h4>
+						<ul>
+							<li v-for="value in tl_data">
+								<div class="left">{{ $key }}</div>
+								<div class="right input-w">
+									<input v-model="value"/>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</detailview>
 			</section>
 			<section id="viewport">
 				<viewport></viewport>

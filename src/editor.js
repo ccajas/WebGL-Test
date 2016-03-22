@@ -44,13 +44,6 @@ Vue.component('editable',
 			viewable: false
 		}
 	},
-	compiled: function()
-	{
-		// Set the first Screens into motion
-
-		// Todo: Add text nodes for info output
-	},
-
 	methods: 
 	{
 		// Handle keydown event
@@ -83,6 +76,34 @@ Vue.component('editable',
 			this.viewable     = (this.textContent == '') ? false : true;
 			Prism.highlightAll();
 		}
+	}
+});
+
+/* Detail View component */
+
+Vue.component('detailview',
+{
+	methods: 
+	{
+		clicked: function() 
+		{
+			console.log('clicked!');
+		}
+	}
+});
+
+/* Section list Item component */
+
+Vue.component('listitem',
+{
+	props: ['key', 'item','section'],
+	methods:
+	{
+		viewDetail: function() 
+		{
+			var name = this.key || this.item.name;
+			console.log('clicked on item', this.key || this.item.name, this.item);
+		}	
 	}
 });
 
