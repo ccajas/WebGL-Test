@@ -26,7 +26,7 @@ Vue.component('viewport',
 		if (componentLists.length < 1)
 			console.log('No component lists found!');
 
-		// Start the app
+		// Start the app!
 		var app = new App(canvas);		
 	},
 	template: '<canvas id="draw"><div>{{ e_noGL }}</div></canvas>'
@@ -34,7 +34,7 @@ Vue.component('viewport',
 
 /* Editable text component */
 
-Vue.component('editable', 
+Vue.component('editable',
 {
 	props:['textContent'],
 	data: function()
@@ -106,16 +106,15 @@ var vm = new Vue(
 		systems: [],
 		section: '',
 		sections: [
-			{text: 'Component', 	 icon: '&#xf01c;'},
-			{text: 'System', 		 icon: '&#xf04c;'},
-			{text: 'EntityTemplate', icon: '&#xf020;'},
-			{text: 'ScreenElement',  icon: '&#xf11e;'}
+			{text: 'Component', 	 icon: '&#xf01c;', color: '#fb0' },
+			{text: 'System', 		 icon: '&#xf04e;', color: '#bf7' },
+			{text: 'EntityTemplate', icon: '&#xf020;', color: '#7ff' },
+			{text: 'ScreenElement',  icon: '&#xf11e;', color: '#0bf' }
 		],
 
 		// Current section settings
-		section_data: null,
-		curr_section: null,
-		curr_icon: null,
+		tl_data: {},
+		section_data: null
 	},
 
 	compiled: function()
@@ -124,15 +123,14 @@ var vm = new Vue(
 
 		// Set initial component type and section
 		var type = 0;
-		this.curr_section = this.sections[0].text;
-		this.curr_icon    = this.sections[0].icon;
+		this.section = this.sections[0];
 
 		// Setup data groups
 		this.component_data = JSON.parse(localStorage.getItem('component_data')) || [];
 		this.system_data    = JSON.parse(localStorage.getItem('system_data'))    || [];
 
 		// Reference for the current data being managed
-		this.section_data = this[this.curr_section.toLowerCase() + '_data'];
+		this.section_data = this[this.section.text.toLowerCase() + '_data'];
 		console.log(this.section_data);
 
 		// Create the componentTypes from LocalStorage
@@ -171,11 +169,10 @@ var vm = new Vue(
 		setView: function(view) 
 		{
 			// Hide text editor if section changed
-			if (view.text != this.curr_section)
+			if (view.text != this.section.text)
 				this.editorText = '';
 
-			this.curr_section = view.text;
-			this.curr_icon	  = view.icon;
+			this.section = view;
 			this.section_data = this[view.text.toLowerCase() + '_data'];
 		},
 
@@ -227,12 +224,23 @@ var vm = new Vue(
 			var text = JSON.stringify(this.section_data[index], null, 4);
 			this.editorText = text;
 			this.currIndex  = index;
+
+			// Get top level data (excluding objects)
+			var item = this.section_data[index];
+			var self = this;
+			this.tl_data = {}
+
+			Object.keys(item).forEach(function(key) 
+			{
+				if (typeof(item[key]) !== 'object')
+					self.tl_data[key] = item[key]
+			});
 		},
 
 		// Save data to browser's localStorage
 		saveStorage: function(data)
 		{
-			var name = this.curr_section.toLowerCase() + '_data';
+			var name = this.section.text.toLowerCase() + '_data';
 			localStorage.setItem(name, JSON.stringify(data));
 		}
 	},

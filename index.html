@@ -14,52 +14,69 @@
 			<div id="title">Test</div>
 			<ul id="topnav">
 				<li v-for="s in sections">
-					<a :class="{ hl: curr_section == s.text }" v-on:click="setView(s)">{{ s.text }}s</a>
+					<a :class="{ hl: section.text == s.text }" v-on:click="setView(s)">{{ s.text }}s</a>
 				</li>
 			</ul>
 		</header>
-		<section id="sidebar" style="width: 20%; height: 100%">
-			<ul class="icon-nav">
-				<li v-for="s in sections">
-					<a :class="{ hl: curr_section == s.text }" v-on:click="setView(s)">
-						<span class="batch">{{{ s.icon }}}</span>
-					</a>
-				</li>
-			</ul>
-			<div style="padding: 8px; padding-bottom: 0px">
-				<input v-model="newItem" v-on:keyup.enter="addItem" 
-					placeholder="enter new {{ curr_section }}">
-			</div>
-			<ul class="main">
-				<li v-for="sdata in section_data">
-					<div v-on:click="viewCode($index)">
-						<a><span class="batch">{{{ curr_icon }}}</span>{{ sdata.name }}</a>&nbsp;
-						<button class="batch conf" v-on:click="addSubItem($index)">&#xf14c;</button>
-						<button class="batch warn" v-on:click="removeItem($index)">&#xf14e;</button>
-					</div>
-					<ul class="sub" v-on:click="viewCode($index)">
-						<li v-for="value in sdata.data"><span class="batch" data-icon="&#xf0ab;"></span>
-							{{ $key }} <i>{{ value.type }}</i></li>
-					</ul>			
-				</li>
-			</ul>
-		</section>
-		<section id="viewport" style="width: 80%; height: 100%">
-			<viewport></viewport>
-			<editable :text-content="editorText" inline-template>
-				<div class="textedit" v-if="viewable">				
-					<ul class="icon-nav">
-						<li><a>Code Editor</a></li>
-						<li><a v-on:click="save"><span class="batch">&#xf059;</span></a></li>
-						<li><a v-on:click="viewable = false"><span class="batch">&#xf0c5;</span></a></li>
+		<div id="main">
+			<section id="sidebar">
+				<ul class="icon-nav">
+					<li v-for="s in sections">
+						<a :class="{ hl: section.text == s.text }" v-on:click="setView(s)">
+							<span class="batch">{{{ s.icon }}}</span>
+						</a>
+					</li>
+				</ul>
+				<div class="input-w">
+					<input v-model="newItem" v-on:keyup.enter="addItem" 
+						placeholder="enter new {{ section.text }}"/>
+				</div>
+				<ul class="hierarchy">
+					<li v-for="sdata in section_data">
+						<div v-on:click="viewCode($index)" :class="{ hl: currIndex == $index }">
+							<a :style="{ color: currIndex == $index ? section.color : '#ccc' }">
+								<span class="batch">{{{ section.icon }}}</span>{{ sdata.name }}
+							</a>&nbsp;
+							<button class="batch conf" v-on:click="addSubItem($index)">&#xf14c;</button>
+							<button class="batch warn" v-on:click="removeItem($index)">&#xf14e;</button>
+						</div>
+						<ul class="sub">
+							<li v-on:click="viewCode($index)" v-for="value in sdata.data">
+								<span class="batch" data-icon="&#xf0ab;"></span>
+								{{ $key }} <i>{{ value.type }}</i>
+							</li>
+						</ul>			
+					</li>
+				</ul>
+				<div class="bottom" v-show="currIndex >= 0">
+					<h4>{{ section.text }} Details</h4>
+					<ul>
+						<li v-for="value in tl_data">
+							<div class="left">{{ $key }}</div>
+							<div class="right input-w">
+								<input v-model="value"/>
+							</div>
+						</li>
 					</ul>
-					<code>
-						<pre v-on:keyup="keyEdit($event)" spellcheck="false"
-						contenteditable="{{ viewable }}" class="language-json">{{ textContent }}</pre>
-					</code>
-				</div>			
-			</editable>
-		</section>
+				</div>
+			</section>
+			<section id="viewport">
+				<viewport></viewport>
+				<editable :text-content="editorText" inline-template>
+					<div class="textedit" v-if="viewable">				
+						<ul class="icon-nav">
+							<li><a>Code Editor</a></li>
+							<li><a v-on:click="save"><span class="batch">&#xf059;</span></a></li>
+							<li><a v-on:click="viewable = false"><span class="batch">&#xf0c5;</span></a></li>
+						</ul>
+						<code>
+							<pre v-on:keyup="keyEdit($event)" spellcheck="false"
+							contenteditable="{{ viewable }}" class="language-json">{{ textContent }}</pre>
+						</code>
+					</div>			
+				</editable>
+			</section>
+		</div>
 	</div>
 	<script src="lib/vue.js"></script>
 	<script src="lib/prism.js"></script>
