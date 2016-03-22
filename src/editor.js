@@ -1,5 +1,5 @@
 
-Vue.config.debug = true;
+Vue.config.debug = false;
 
 Vue.component('viewport', 
 {
@@ -36,31 +36,51 @@ Vue.component('viewport',
 
 Vue.component('editable', 
 {
-	props:['textContent','viewable'],
+	props:['textContent'],
+	data: function()
+	{
+		return {
+			textModified: '',
+			viewable: false
+		}
+	},
 	compiled: function()
 	{
 		// Set the first Screens into motion
 
 		// Todo: Add text nodes for info output
-		console.log(this.$el);
+	},
 
-		this.$el.onkeydown = function(e)
+	methods: 
+	{
+		// Handle keydown event
+		keyEdit: function(e)
 		{
+			this.textModified = e.target.innerText;		
 			if (e.keyCode == 9)
 			{
 				document.execCommand('styleWithCSS', false, null);
 				document.execCommand('indent', true, null);
 				e.preventDefault();
 			}
+		},
+
+		save: function () 
+		{
+			if (this.textModified.trim())
+				this.$dispatch('saveCode', this.textModified);
 		}
 	},
 
-	// Re-update syntax highligt
+	// Re-update syntax highlight
+	// Make this component viewable upon changing
 	watch:
 	{
 		textContent: function()
 		{
-			console.log(this.textContent);
+			// Hide if original text received is blank
+			this.textModified = this.textContent;
+			this.viewable     = (this.textContent == '') ? false : true;
 			Prism.highlightAll();
 		}
 	}
@@ -77,9 +97,9 @@ var vm = new Vue(
 		component_data: null,
 		system_data: null,
 
-		// Editable text area
-		viewEditor: false,
+		// Info for editable text area
 		editorText: 'Add your text here!',
+		currIndex: -1,
 
 		// Data for ECS
 		componentTypes: [],
@@ -91,10 +111,13 @@ var vm = new Vue(
 			{text: 'EntityTemplate', icon: '&#xf020;'},
 			{text: 'ScreenElement',  icon: '&#xf11e;'}
 		],
+
+		// Current section settings
 		section_data: null,
 		curr_section: null,
 		curr_icon: null,
 	},
+
 	compiled: function()
 	{
 		var self = this;
@@ -118,10 +141,39 @@ var vm = new Vue(
 			self.componentTypes.push(new ComponentType(t.text, t.type));
 		});
 	},
+	events:
+	{
+		// Save JSON code for item
+		saveCode: function(data)
+		{
+			var jsonData;
+
+			try {
+				jsonData = JSON.parse(data);
+			} 
+			catch (e) 
+			{
+				// TODO: display nicer error on web page
+				console.error('Invalid JSON data:', e);
+				return false;
+			}
+
+			console.log('saving code to index '+ this.currIndex, jsonData);
+			console.log(this.section_data[this.currIndex]);
+
+			// Update and save the data
+			this.section_data[this.currIndex] = jsonData;
+			this.saveStorage(this.section_data);
+		}
+	},
 	methods: 
 	{
 		setView: function(view) 
 		{
+			// Hide text editor if section changed
+			if (view.text != this.curr_section)
+				this.editorText = '';
+
 			this.curr_section = view.text;
 			this.curr_icon	  = view.icon;
 			this.section_data = this[view.text.toLowerCase() + '_data'];
@@ -169,19 +221,18 @@ var vm = new Vue(
 		},
 
 		// View JSON code from item
-		viewJSON: function(index)
+		viewCode: function(index)
 		{
-			this.viewEditor = true;
-
 			// Format the text to be more readable
 			var text = JSON.stringify(this.section_data[index], null, 4);
 			this.editorText = text;
+			this.currIndex  = index;
 		},
 
 		// Save data to browser's localStorage
 		saveStorage: function(data)
 		{
-			var name = this.section.toLowerCase() + '_data';
+			var name = this.curr_section.toLowerCase() + '_data';
 			localStorage.setItem(name, JSON.stringify(data));
 		}
 	},
