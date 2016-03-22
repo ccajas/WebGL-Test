@@ -49,8 +49,9 @@
 			<editable :text-content="editorText" inline-template>
 				<div class="textedit" v-if="viewable">				
 					<ul class="icon-nav">
-						<li><a v-on:click="viewable = false">Code Editor</a></li>
+						<li><a>Code Editor</a></li>
 						<li><a v-on:click="save"><span class="batch">&#xf059;</span></a></li>
+						<li><a v-on:click="viewable = false"><span class="batch">&#xf0c5;</span></a></li>
 					</ul>
 					<code>
 						<pre v-on:keyup="keyEdit($event)" spellcheck="false"
