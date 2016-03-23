@@ -127,28 +127,11 @@ Vue.component('listitem',
 	},
 	computed: {
 		isFolder: function () {
-			return this.item && (this.item.data && this.item.data.length > 0);
+			return this.item.data && this.item.data.length > 0;
 		}
 	},
-	compiled: function()
-	{
-
-	},	
 	methods:
 	{
-		select: function()
-		{
-			this.selected = true;
-			this.$els.name.style.display = 'inline';
-			this.$els.name.focus();
-		},
-
-		deselect: function()
-		{
-			this.selected = false;
-			this.$els.name.style.display = 'none';
-		},
-
 		addSub: function()
 		{
 			console.log(this.item);
@@ -169,6 +152,42 @@ Vue.component('listitem',
 		{
 			this.selected = false;
 			this.$els.name.style.display = 'none';
+			console.log('updated item '+ idx, this.item);
+			//this.$dispatch('saveItem', idx, this.item);
+		}
+	}
+});
+
+Vue.component('item', 
+{
+	props: ['value','meta'],
+	template: '#item-editable',
+	data: function()
+	{
+		return {
+			selected: false
+		}
+	},
+	methods:
+	{
+		select: function()
+		{
+			this.selected = true;
+			this.$els.field.style.display = 'inline';
+			this.$els.field.focus();
+		},
+
+		deselect: function()
+		{
+			this.selected = false;
+			this.$els.field.style.display = 'none';
+		},
+
+		// Called on blur event when done editing item
+		update: function(idx)
+		{
+			this.selected = false;
+			this.$els.field.style.display = 'none';
 			console.log('updated item '+ idx, this.item);
 			//this.$dispatch('saveItem', idx, this.item);
 		}

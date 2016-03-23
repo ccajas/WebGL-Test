@@ -32,17 +32,17 @@
 						placeholder="enter new {{ section.text }}"/>
 				</div>
 
+				<ul class="hierarchy">
+					<listitem :item="sectionData" :icon="section.icon" :level="0"></listitem>
+				</ul>
+
 				<!-- listitem template -->
 				<script type="text/x-template" id="listitem-template">
 					<li>
 						<div>
-							<div @dblclick="select" class="left batch">{{{ icon }}}</div>
-							<div @dblclick="select" class="left" v-show="!selected">{{ item.name }}</div>
-							<div v-if="item && item.meta" class="left">
-								<i>{{ item.meta }}</i></div>
-							<input v-el:name v-model="item.name"
-								@keyup.enter="update(item.name)"
-								@keyup.esc="deselect" @blur="deselect"/>
+							<div class="left batch">{{{ icon }}}</div>
+							<item :value="item.name" :meta="false"></item>
+							<item :value="item.meta" :meta="true" v-if="item.meta"></item>
 
 							<button class="batch warn" @click="remove">&#xf14e;</button>
 							<button class="batch conf" @click="addSub">&#xf14c;</button>
@@ -55,9 +55,18 @@
 					</li>
 				</script>
 
-				<ul class="hierarchy">
-					<listitem :item="sectionData" :icon="section.icon" :level="0"></listitem>
-				</ul>
+				<!-- single editable item -->
+				<script type="text/x-template" id="item-editable">
+					<div>
+						<div @dblclick="select" class="left" v-show="!selected">
+							<i v-if="meta">{{ value }}</i>
+							<span v-if="!meta">{{ value }}</span>
+						</div>
+						<input v-el:field v-model="value" :class="{ meta: meta }"
+							@keyup.enter="update(value)"
+							@keyup.esc="deselect" @blur="deselect"/>
+					</div>
+				</script>
 				
 			</section>
 			<section id="viewport">
