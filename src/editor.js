@@ -58,7 +58,7 @@ Vue.component('editable',
 			}
 		},
 
-		save: function () 
+		save: function() 
 		{
 			if (this.textModified.trim())
 				this.$dispatch('saveCode', this.textModified);
@@ -83,11 +83,25 @@ Vue.component('editable',
 
 Vue.component('detailview',
 {
+	props: ['item','name'],
+	data: function()
+	{
+		return {
+			itemFull: ''
+		}
+	},
 	methods: 
 	{
-		clicked: function() 
+		save: function() 
 		{
-			console.log('clicked!');
+			
+		}
+	},
+	watch:
+	{
+		item: function()
+		{
+			this.itemFull = JSON.stringify(this.item);
 		}
 	}
 });
@@ -103,6 +117,9 @@ Vue.component('listitem',
 		{
 			var name = this.key || this.item.name;
 			console.log('clicked on item', this.key || this.item.name, this.item);
+
+			// Tell parent component to display the item details	
+			this.$dispatch('viewItemDetail', name, this.item);
 		}	
 	}
 });
@@ -134,7 +151,8 @@ var vm = new Vue(
 		],
 
 		// Current section settings
-		tl_data: {},
+		selectedName: '',
+		selectedItem: {},
 		section_data: null
 	},
 
@@ -162,6 +180,13 @@ var vm = new Vue(
 	},
 	events:
 	{
+		// Get detail of selected item to view
+		viewItemDetail: function(name, item)
+		{
+			this.selectedName = name;
+			this.selectedItem = item;
+		},
+
 		// Save JSON code for item
 		saveCode: function(data)
 		{
@@ -237,7 +262,7 @@ var vm = new Vue(
 				this.saveStorage(this.section_data);
 			}
 		},
-
+/*
 		// View JSON code from item
 		viewCode: function(index)
 		{
@@ -256,7 +281,7 @@ var vm = new Vue(
 				if (typeof(item[key]) !== 'object')
 					self.tl_data[key] = item[key]
 			});
-		},
+		},*/
 
 		// Save data to browser's localStorage
 		saveStorage: function(data)

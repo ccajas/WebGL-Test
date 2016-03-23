@@ -38,12 +38,12 @@
 								<span class="batch">{{{ section.icon }}}</span>{{ item.name }}
 							</div>
 							<ul class="sub">
-								<!-- subitems as object values -->
+								<!-- sub-items as object values -->
 								<li v-for="subitem in item.data">
 									<listitem :item="subitem" :key="$key" inline-template>
 										<div v-on:click="viewDetail">
 											<span class="batch" data-icon="&#xf0ab;"></span>
-											{{ key }} <i>{{ value }}</i>
+											{{ key }} <i>{{ item.type }}</i>
 										</div>
 									</listitem>
 								</li>
@@ -66,17 +66,32 @@
 						</ul>-->
 					</li>
 				</ul>
-				<detailview :data="selectedData">
-					<div class="bottom" v-show="currIndex >= 0">
-						<h4>{{ section.text }} Details</h4>
+				<detailview :item="selectedItem" :name="selectedName" inline-template>
+					<div class="bottom">
+						<h4>{{ name }} Details</h4>
 						<ul>
-							<li v-for="value in tl_data">
-								<div class="left">{{ $key }}</div>
+							<li>
+								<div class="left">Name</div>
 								<div class="right input-w">
-									<input v-model="value"/>
+									<input v-model="name"/>
+								</div>
+							</li>
+							<li v-show="item.type != null">
+								<div class="left">Type</div>
+								<div class="right input-w">
+									<input v-model="item.type"/>
+								</div>
+							</li>
+							<!-- show for top-level items with data -->
+							<li v-show="item.data != null"><div class="left">Properties</div></li>
+							<li v-show="item.data != null" v-for="value in item.data">
+								<div class="input-w">
+									<input v-model="$key"/>
+									<button class="batch">&#xf14e;</button>
 								</div>
 							</li>
 						</ul>
+						{{ itemFull }}
 					</div>
 				</detailview>
 			</section>
