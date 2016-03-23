@@ -42,11 +42,11 @@
 					<li>
 						<div>				
 							<span class="batch">{{{ icon }}}</span>
-							<item :value="item.name" :meta="false"></item>
-							<item :value="item.meta" :meta="true" v-if="item.meta"></item>
+							<item :value="item.name" :idx="index" :meta="false"></item>
+							<item :value="item.meta" :idx="index" :meta="true" v-if="item.meta"></item>
 
-							<button class="batch warn" @click="remove">&#xf14e;</button>
-							<button class="batch conf" @click="addSub">&#xf14c;</button>
+							<button v-if="level > 0" class="batch warn" @click="remove">&#xf14e;</button>
+							<button v-if="level > 0" class="batch conf" @click="addSub">&#xf14c;</button>
 						</div>						
 						<ul class="sub" v-if="hasData">
 							<listitem v-for="item in item.data" :level="level+1" :item="item" 
@@ -64,7 +64,7 @@
 							<span v-if="!meta">{{ value }}</span>
 						</span>
 						<input v-el:field v-model="value" :class="{ meta: meta }"
-							@keyup.enter="update(value)"
+							@keyup.enter="update"
 							@keyup.esc="deselect" @blur="deselect"/>
 					</span>
 				</script>

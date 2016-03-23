@@ -146,14 +146,14 @@ Vue.component('listitem',
 			console.log(this.item);
 			this.item.data = this.item.data || [];
 			this.item.data.push({name: 'NewItem', meta: 'type', data: [] } );
+			this.$dispatch('saveItems');
 		},
 
 		remove: function()
 		{
-			// If this data list is empty,
-			// go up one level and dispatch there
-			if (!this.hasData)
-				this.$dispatch('removeDataItem', this.index);
+			// Go up one level and remove item from data list
+			this.$dispatch('removeDataItem', this.index);
+			this.$dispatch('saveItems');
 		}
 	}
 });
@@ -162,7 +162,7 @@ Vue.component('listitem',
 
 Vue.component('item', 
 {
-	props: ['value','meta'],
+	props: ['value','meta','idx'],
 	template: '#item-editable',
 	data: function()
 	{
@@ -185,12 +185,12 @@ Vue.component('item',
 		},
 
 		// Called on blur event when done editing item
-		update: function(idx)
+		update: function()
 		{
 			this.selected = false;
 			this.$els.field.style.display = 'none';
-			console.log('updated item '+ idx, this.item);
-			//this.$dispatch('saveItem', idx, this.item);
+			console.log('updated item '+ this.idx, this.value);
+			//this.$dispatch('saveItems');
 		}
 	}
 });
@@ -222,7 +222,6 @@ var vm = new Vue(
 		],
 
 		// Current section settings
-		selectedName: '',
 		sectionData: {
  			name: '',
  			meta: '',
@@ -278,9 +277,9 @@ var vm = new Vue(
 		},
 
 		// Save item updates to localStorage
-		saveItem: function(item, key)
+		saveItems: function()
 		{
-			this.sectionData[key] = item;
+			console.log(this.sectionData);
 			this.saveStorage(this.sectionData);
 		},
 
@@ -331,32 +330,12 @@ var vm = new Vue(
 				this.saveStorage(this.sectionData);
 			}
 		},
-/*
-		// View JSON code from item
-		viewCode: function(index)
-		{
-			// Format the text to be more readable
-			var text = JSON.stringify(this.sectionData[index], null, 4);
-			this.editorText = text;
-			this.currIndex  = index;
 
-			// Get top level data (excluding objects)
-			var item = this.sectionData[index];
-			var self = this;
-			this.tl_data = {}
-
-			Object.keys(item).forEach(function(key) 
-			{
-				if (typeof(item[key]) !== 'object')
-					self.tl_data[key] = item[key]
-			});
-		},*/
-
-		// Save data to browser's localStorage
-		saveStorage: function(data)
+		// Save current section's data to browser's localStorage
+		saveStorage: function()
 		{
 			var name = this.section.text.toLowerCase() + '_data';
-			localStorage.setItem(name, JSON.stringify(data));
+			localStorage.setItem(name, JSON.stringify(this.sectionData));
 		}
 	},
 });
