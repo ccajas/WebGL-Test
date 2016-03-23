@@ -29,7 +29,7 @@ Vue.component('viewport',
 		// Start the app!
 		var app = new App(canvas);		
 	},
-	template: '<canvas id="draw"><div>{{ e_noGL }}</div></canvas>'
+	template: '<canvas id="draw"></canvas>'
 });
 
 /* Editable text component */
@@ -79,36 +79,6 @@ Vue.component('editable',
 	}
 });
 
-/* Detail View component */
-
-Vue.component('detailview',
-{
-	props: ['item','name'],
-	data: function()
-	{
-		return {
-			itemFull: ''
-		}
-	},
-	methods: 
-	{
-		deleteItem: function(idx) 
-		{
-			console.log(idx, this.item.data);
-			this.item.data = [];
-			console.log(idx, this.item);
-			this.$dispatch('saveItem', idx, this.item);
-		}
-	},
-	watch:
-	{
-		item: function()
-		{
-			this.itemFull = JSON.stringify(this.item);
-		}
-	}
-});
-
 /* Section list Item component */
 
 Vue.component('listitem',
@@ -117,21 +87,28 @@ Vue.component('listitem',
 		'level': Number,
 		'index': Number,
 		'item' : { type: Object },
-		'icon' : String
+		'icon' : String,
+		'src'  : Array
 	},
 	template: '#listitem-template',
 	data: function()
 	{
 		return {
+			open: true,
 			selected: false
 		}
 	},
-	computed: {
-		hasData: function () {
-			return this.item.data && this.item.data.length > 0;
+	computed: 
+	{
+		hasData: function () 
+		{
+			var hasData =  this.item.data && this.item.data.length > 0;		
+			this.icon = hasData || this.level < 2 ? this.icon : '&#xf0ab;';
+
+			return hasData;
 		}
 	},
-	events: 
+	events:
 	{
 		removeDataItem: function (index)
 		{
@@ -141,19 +118,19 @@ Vue.component('listitem',
 	},
 	methods:
 	{
+
 		addSub: function()
 		{
-			console.log(this.item);
 			this.item.data = this.item.data || [];
 			this.item.data.push({name: 'NewItem', meta: 'type', data: [] } );
-			this.$dispatch('saveItems');
+			this.$dispatch('saveStorage');
 		},
 
 		remove: function()
 		{
 			// Go up one level and remove item from data list
 			this.$dispatch('removeDataItem', this.index);
-			this.$dispatch('saveItems');
+			this.$dispatch('saveStorage');
 		}
 	}
 });
@@ -162,7 +139,12 @@ Vue.component('listitem',
 
 Vue.component('item', 
 {
-	props: ['value','meta','idx'],
+	props: {
+		'value': String,
+		'meta' : Boolean,
+		'idx'  : Number,
+		'src'  : { type: Array }
+	},
 	template: '#item-editable',
 	data: function()
 	{
@@ -170,18 +152,33 @@ Vue.component('item',
 			selected: false
 		}
 	},
+	computed: 
+	{
+		hasSrc: function () {
+			return this.src && this.src.length > 0;
+		}
+	},
 	methods:
 	{
 		select: function()
 		{
 			this.selected = true;
-			this.$els.field.style.display = 'inline';
-			this.$els.field.focus();
+
+			if (!this.hasSrc)
+			{
+				this.$els.field.style.display = 'inline';
+				this.$els.field.focus();
+			}
 		},
 		deselect: function()
 		{
 			this.selected = false;
-			this.$els.field.style.display = 'none';
+			console.log('deselect');
+
+			if (!this.hasSrc)
+			{
+				this.$els.field.style.display = 'none';
+			}
 		},
 
 		// Called on blur event when done editing item
@@ -190,7 +187,7 @@ Vue.component('item',
 			this.selected = false;
 			this.$els.field.style.display = 'none';
 			console.log('updated item '+ this.idx, this.value);
-			//this.$dispatch('saveItems');
+			//this.$dispatch('saveStorage');
 		}
 	}
 });
@@ -215,10 +212,10 @@ var vm = new Vue(
 		systems: [],
 		section: '',
 		sections: [
-			{text: 'Component', 	 icon: '&#xf01c;', color: '#fb0' },
-			{text: 'System', 		 icon: '&#xf04e;', color: '#bf7' },
-			{text: 'EntityTemplate', icon: '&#xf020;', color: '#7ff' },
-			{text: 'ScreenElement',  icon: '&#xf11e;', color: '#0bf' }
+			{ name: 'Component', 	  icon: '&#xf01c;', color: '#fb0' },
+			{ name: 'System', 		  icon: '&#xf04e;', color: '#bf7' },
+			{ name: 'EntityTemplate', icon: '&#xf020;', color: '#7ff' },
+			{ name: 'ScreenElement',  icon: '&#xf11e;', color: '#0bf' }
 		],
 
 		// Current section settings
@@ -245,65 +242,29 @@ var vm = new Vue(
 			{ name: 'Systems', data: [] }
 
 		// Reference for the current data being managed
-		this.sectionData = this[this.section.text.toLowerCase() + '_data'];
+		this.sectionData = this[this.section.name.toLowerCase() + '_data'];
+
+		// Attach sources for data entry
+		this.sections[0].src = [];
+		this.sections[1].src = this.component_data.data;
+
+		console.log('sections', this.sections);
 
 		// Create the componentTypes from LocalStorage
-		this.component_data.forEach(function(t)
+		this.component_data.data.forEach(function(t)
 		{
-			self.componentTypes.push(new ComponentType(t.text, t.type));
+			self.componentTypes.push(new ComponentType(t.name));
 		});
+
+		console.log('componentTypes', this.componentTypes);
 	},
 	events:
 	{
-		// Sub items for extra data
-		addSubItem: function(index)
+		// Save current section's data to browser's localStorage
+		saveStorage: function()
 		{
-			var item = this.sectionData[index];
-			var type = item.type;
-
-			// Replace the sub-item data
-			item.data.push({'newItem': 'type'});
-			//this.section_data.splice(index, 1);
-			//this.section_data.push({ name: cmp.name, type: type, data: cmp.data });	
-			//this.newItem = '';
-			this.saveStorage(this.sectionData);
-		},
-
-		// Remove an item from the root level
-		removeItem: function(index) 
-		{
-			this.sectionData.splice(index, 1);
-			this.saveStorage(this.sectionData);
-		},
-
-		// Save item updates to localStorage
-		saveItems: function()
-		{
-			console.log(this.sectionData);
-			this.saveStorage(this.sectionData);
-		},
-
-		// Save JSON code for item
-		saveCode: function(data)
-		{
-			var jsonData;
-
-			try {
-				jsonData = JSON.parse(data);
-			} 
-			catch (e) 
-			{
-				// TODO: display nicer error on web page
-				console.error('Invalid JSON data:', e);
-				return false;
-			}
-
-			console.log('saving code to index '+ this.currIndex, jsonData);
-			console.log(this.sectionData[this.currIndex]);
-
-			// Update and save the data
-			this.sectionData[this.currIndex] = jsonData;
-			this.saveStorage(this.sectionData);
+			var name = this.section.name.toLowerCase() + '_data';
+			localStorage.setItem(name, JSON.stringify(this.sectionData));
 		}
 	},
 	methods: 
@@ -311,11 +272,11 @@ var vm = new Vue(
 		setView: function(view) 
 		{
 			// Hide text editor if section changed
-			if (view.text != this.section.text)
+			if (view.text != this.section.name)
 				this.editorText = '';
 
 			this.section = view;
-			this.sectionData = this[view.text.toLowerCase() + '_data'];
+			this.sectionData = this[view.name.toLowerCase() + '_data'];
 		},
 
 		// Add item to the root level
@@ -327,15 +288,8 @@ var vm = new Vue(
 				var nextType = this.sectionData.length + 1;
 				this.sectionData.data.push({ name: text, type: nextType, data: [] });
 				this.newItem = '';
-				this.saveStorage(this.sectionData);
+				this.$emit('saveStorage');
 			}
-		},
-
-		// Save current section's data to browser's localStorage
-		saveStorage: function()
-		{
-			var name = this.section.text.toLowerCase() + '_data';
-			localStorage.setItem(name, JSON.stringify(this.sectionData));
 		}
 	},
 });
