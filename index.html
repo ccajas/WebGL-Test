@@ -37,8 +37,10 @@
 					<li>
 						<div>
 							<div @dblclick="select" class="left batch">{{{ icon }}}</div>
-							<div @dblclick="select" class="left" v-show="!selected">{{ item && item.name }}</div>
-							<input v-el:item-name v-model="item.name"
+							<div @dblclick="select" class="left" v-show="!selected">{{ item.name }}</div>
+							<div v-if="item && item.meta" class="left">
+								<i>{{ item.meta }}</i></div>
+							<input v-el:name v-model="item.name"
 								@keyup.enter="update(item.name)"
 								@keyup.esc="deselect" @blur="deselect"/>
 

@@ -113,7 +113,11 @@ Vue.component('detailview',
 
 Vue.component('listitem',
 {
-	props: ['level', 'item', 'icon'],
+	props: {
+		'level': Number, 
+		'item' : { type: Object },
+		'icon' : String
+	},
 	template: '#listitem-template',
 	data: function()
 	{
@@ -123,29 +127,33 @@ Vue.component('listitem',
 	},
 	computed: {
 		isFolder: function () {
-			return (this.item.data && this.item.data.length > 0);
+			return this.item && (this.item.data && this.item.data.length > 0);
 		}
 	},
+	compiled: function()
+	{
+
+	},	
 	methods:
 	{
 		select: function()
 		{
 			this.selected = true;
-			this.$els.itemName.style.display = 'inline';
-			this.$els.itemName.focus();
+			this.$els.name.style.display = 'inline';
+			this.$els.name.focus();
 		},
 
 		deselect: function()
 		{
 			this.selected = false;
-			this.$els.itemName.style.display = 'none';
+			this.$els.name.style.display = 'none';
 		},
 
 		addSub: function()
 		{
 			console.log(this.item);
 			this.item.data = this.item.data || [];
-			this.item.data.push({name: 'NewItem', data: [] } );
+			this.item.data.push({name: 'NewItem', meta: 'type', data: [] } );
 			//this.$dispatch('addSubItem', this.key);
 		},
 
@@ -160,7 +168,7 @@ Vue.component('listitem',
 		update: function(idx)
 		{
 			this.selected = false;
-			this.$els.itemName.style.display = 'none';
+			this.$els.name.style.display = 'none';
 			console.log('updated item '+ idx, this.item);
 			//this.$dispatch('saveItem', idx, this.item);
 		}
@@ -195,8 +203,11 @@ var vm = new Vue(
 
 		// Current section settings
 		selectedName: '',
-		selectedItem: {},
-		sectionData: null
+		sectionData: {
+ 			name: '',
+ 			meta: '',
+            data: []
+		},
 	},
 
 	compiled: function()

@@ -299,9 +299,9 @@ ul.sub li {
 	padding-left: 5px;
 }
 
-ul.sub li > div > i {
+ul.sub li > div i {
 	padding-left: 5px;
-	color: #606060;
+	color: #777;
 }
 
 ul {
