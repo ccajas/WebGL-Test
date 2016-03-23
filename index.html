@@ -33,7 +33,8 @@
 				</div>
 
 				<ul class="hierarchy">
-					<listitem :item="sectionData" :icon="section.icon" :level="0"></listitem>
+					<listitem :item="sectionData" :icon="section.icon" :level="0" :index="$index">
+					</listitem>
 				</ul>
 
 				<!-- listitem template -->
@@ -47,9 +48,9 @@
 							<button class="batch warn" @click="remove">&#xf14e;</button>
 							<button class="batch conf" @click="addSub">&#xf14c;</button>
 						</div>						
-						<ul class="sub" v-if="isFolder">
+						<ul class="sub" v-if="hasData">
 							<listitem v-for="item in item.data" :level="level+1" :item="item" 
-								:icon="(level < 1) ? icon : '&#xf0ab;'">
+								:index="$index" :icon="(level < 1) ? icon : '&#xf0ab;'">
 							</listitem>
 						</ul>
 					</li>

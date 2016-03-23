@@ -114,7 +114,8 @@ Vue.component('detailview',
 Vue.component('listitem',
 {
 	props: {
-		'level': Number, 
+		'level': Number,
+		'index': Number,
 		'item' : { type: Object },
 		'icon' : String
 	},
@@ -126,8 +127,16 @@ Vue.component('listitem',
 		}
 	},
 	computed: {
-		isFolder: function () {
+		hasData: function () {
 			return this.item.data && this.item.data.length > 0;
+		}
+	},
+	events: 
+	{
+		removeDataItem: function (index)
+		{
+			console.log('remove item', index);
+			this.item.data.splice(index, 1);
 		}
 	},
 	methods:
@@ -137,26 +146,19 @@ Vue.component('listitem',
 			console.log(this.item);
 			this.item.data = this.item.data || [];
 			this.item.data.push({name: 'NewItem', meta: 'type', data: [] } );
-			//this.$dispatch('addSubItem', this.key);
 		},
 
 		remove: function()
 		{
-			this.item.data.splice(index, 1);
-			//console.log('index', this.key);
-			//this.$dispatch('removeItem', this.key);
-		},
-
-		// Called on blur event when done editing item
-		update: function(idx)
-		{
-			this.selected = false;
-			this.$els.name.style.display = 'none';
-			console.log('updated item '+ idx, this.item);
-			//this.$dispatch('saveItem', idx, this.item);
+			// If this data list is empty,
+			// go up one level and dispatch there
+			if (!this.hasData)
+				this.$dispatch('removeDataItem', this.index);
 		}
 	}
 });
+
+/* Editable item component */
 
 Vue.component('item', 
 {
@@ -176,7 +178,6 @@ Vue.component('item',
 			this.$els.field.style.display = 'inline';
 			this.$els.field.focus();
 		},
-
 		deselect: function()
 		{
 			this.selected = false;
