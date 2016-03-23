@@ -136,14 +136,11 @@ canvas {
 	overflow: auto;
 }
 
-.bottom li > div.left {
-	padding: 10px 0px 8px 8px;
-	width: 35%;
+.left {
 	float: left;
 }
 
-.bottom li > div.right {
-	width: 50%;
+.right {
 	float: right;
 }
 
@@ -155,7 +152,7 @@ canvas {
 	width: 8px;
 }
 ::-webkit-scrollbar-track {
-	margin: 2px;
+	margin: 0px;
 }
 ::-webkit-scrollbar {
 	width: 16px;
@@ -169,7 +166,7 @@ canvas {
 	font-family: 'Batch';
 	line-height: 1;
 	display: inline-block;
-	padding-right: 7px;
+	padding: 2px 7px;
 }
 
 .batch:before {
@@ -265,8 +262,12 @@ ul.hierarchy {
 	overflow-y: auto;
 }
 
+ul.sub {
+	overflow-y: auto;
+}
+
 ul.hierarchy > li > div,
-ul.sub li {
+ul.sub > li > div {
 	padding-top: 5px;
 	height: 20px;
 	border-bottom: 1px solid #333;
@@ -274,8 +275,8 @@ ul.sub li {
 
 ul.hierarchy > li > div:hover,
 ul.hierarchy > li > div.hl,
-ul.sub li:hover,
-ul.sub li.hl {
+ul.sub li > div:hover,
+ul.sub li > div.hl {
 	background: #333;
 	cursor: pointer;
 }
@@ -314,7 +315,7 @@ input, button {
 	font-size: 1em;
 	font-family: 'Open Sans', Helvetica, Arial;
 	padding: 4px;
-	background: #171717;
+	background: transparent;
 	border: 0px;
 	color: #eee;
 	outline: 0px solid transparent;
@@ -324,6 +325,12 @@ input, button {
 	padding: 0px;
 	margin: 0px;
 	width: 100%;
+}
+
+.hierarchy input {
+	display: none;
+	font-style: italic;
+	letter-spacing: 0.03em;
 }
 
 ::-webkit-input-placeholder { font-style: italic; color: #606060; }
@@ -374,9 +381,15 @@ button.batch.warn:hover {
 	color: #f77;
 }
 
-.input-w button.batch {
-	margin-left: -20px;
+.hierarchy li > div button.batch {
+	display: none;
+	float: right;
+	margin: 1px 3px;
 	color: #555;
+}
+
+.hierarchy li > div:hover button.batch {
+	display: inline;
 }
 
 pre[contenteditable="true"] {

@@ -31,69 +31,32 @@
 					<input v-model="newItem" v-on:keyup.enter="addItem" 
 						placeholder="enter new {{ section.text }}"/>
 				</div>
-				<ul class="hierarchy">
-					<li v-for="item in section_data">
-						<listitem :item="item" :section="section" inline-template>
-							<div v-on:click="viewDetail">
-								<span class="batch">{{{ section.icon }}}</span>{{ item.name }}
-							</div>
-							<ul class="sub">
-								<!-- sub-items as object values -->
-								<li v-for="subitem in item.data">
-									<listitem :item="subitem" :key="$key" inline-template>
-										<div v-on:click="viewDetail">
-											<span class="batch" data-icon="&#xf0ab;"></span>
-											{{ key }} <i>{{ item.type }}</i>
-										</div>
-									</listitem>
-								</li>
-							</ul>
-						</listitem>
 
-						<!--</sdata>
-						<div v-on:click="viewDetail($index)" :class="{ hl: currIndex == $index }">
-							<a :style="{ color: currIndex == $index ? section.color : '#ccc' }">
-								<span class="batch">{{{ section.icon }}}</span>{{ sdata.name }}
-							</a>&nbsp;
-							<button class="batch conf" v-on:click="addSubItem($index)">&#xf14c;</button>
-							<button class="batch warn" v-on:click="removeItem($index)">&#xf14e;</button>
+				<!-- listitem template -->
+				<script type="text/x-template" id="listitem-template">
+					<li>
+						<div>
+							<div @dblclick="select" class="left batch">{{{ icon }}}</div>
+							<div @dblclick="select" class="left" v-show="!selected">{{ item && item.name }}</div>
+							<input v-el:item-name v-model="item.name"
+								@keyup.enter="update(item.name)"
+								@keyup.esc="deselect" @blur="deselect"/>
+
+							<button class="batch warn" @click="remove">&#xf14e;</button>
+							<button class="batch conf" @click="addSub">&#xf14c;</button>
 						</div>
-						<ul class="sub">
-							<li v-on:click="viewCode($index)" v-for="value in sdata.data">
-								<span class="batch" data-icon="&#xf0ab;"></span>
-								{{ $key }} <i>{{ value.type }}</i>
-							</li>
-						</ul>-->
-					</li>
-				</ul>
-				<detailview :item="selectedItem" :name="selectedName" inline-template>
-					<div class="bottom">
-						<h4>{{ name }} Details</h4>
-						<ul>
-							<li>
-								<div class="left">Name</div>
-								<div class="right input-w">
-									<input v-model="name"/>
-								</div>
-							</li>
-							<li v-show="item.type != null">
-								<div class="left">Type</div>
-								<div class="right input-w">
-									<input v-model="item.type"/>
-								</div>
-							</li>
-							<!-- show for top-level items with data -->
-							<li v-show="item.data != null"><div class="left">Properties</div></li>
-							<li v-show="item.data != null" v-for="value in item.data">
-								<div class="input-w">
-									<input v-model="$key"/>
-									<button class="batch">&#xf14e;</button>
-								</div>
-							</li>
+						<ul class="sub" v-if="isFolder">
+							<listitem v-for="item in item.data" :level="level+1" :item="item" 
+								:icon="(level < 1) ? icon : '&#xf0ab;'">
+							</listitem>
 						</ul>
-						{{ itemFull }}
-					</div>
-				</detailview>
+					</li>
+				</script>
+
+				<ul class="hierarchy">
+					<listitem :item="sectionData" :icon="section.icon" :level="0"></listitem>
+				</ul>
+				
 			</section>
 			<section id="viewport">
 				<viewport></viewport>

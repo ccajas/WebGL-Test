@@ -92,9 +92,12 @@ Vue.component('detailview',
 	},
 	methods: 
 	{
-		save: function() 
+		deleteItem: function(idx) 
 		{
-			
+			console.log(idx, this.item.data);
+			this.item.data = [];
+			console.log(idx, this.item);
+			this.$dispatch('saveItem', idx, this.item);
 		}
 	},
 	watch:
@@ -110,17 +113,57 @@ Vue.component('detailview',
 
 Vue.component('listitem',
 {
-	props: ['key', 'item','section'],
+	props: ['level', 'item', 'icon'],
+	template: '#listitem-template',
+	data: function()
+	{
+		return {
+			selected: false
+		}
+	},
+	computed: {
+		isFolder: function () {
+			return (this.item.data && this.item.data.length > 0);
+		}
+	},
 	methods:
 	{
-		viewDetail: function() 
+		select: function()
 		{
-			var name = this.key || this.item.name;
-			console.log('clicked on item', this.key || this.item.name, this.item);
+			this.selected = true;
+			this.$els.itemName.style.display = 'inline';
+			this.$els.itemName.focus();
+		},
 
-			// Tell parent component to display the item details	
-			this.$dispatch('viewItemDetail', name, this.item);
-		}	
+		deselect: function()
+		{
+			this.selected = false;
+			this.$els.itemName.style.display = 'none';
+		},
+
+		addSub: function()
+		{
+			console.log(this.item);
+			this.item.data = this.item.data || [];
+			this.item.data.push({name: 'NewItem', data: [] } );
+			//this.$dispatch('addSubItem', this.key);
+		},
+
+		remove: function()
+		{
+			this.item.data.splice(index, 1);
+			//console.log('index', this.key);
+			//this.$dispatch('removeItem', this.key);
+		},
+
+		// Called on blur event when done editing item
+		update: function(idx)
+		{
+			this.selected = false;
+			this.$els.itemName.style.display = 'none';
+			console.log('updated item '+ idx, this.item);
+			//this.$dispatch('saveItem', idx, this.item);
+		}
 	}
 });
 
@@ -153,7 +196,7 @@ var vm = new Vue(
 		// Current section settings
 		selectedName: '',
 		selectedItem: {},
-		section_data: null
+		sectionData: null
 	},
 
 	compiled: function()
@@ -165,12 +208,14 @@ var vm = new Vue(
 		this.section = this.sections[0];
 
 		// Setup data groups
-		this.component_data = JSON.parse(localStorage.getItem('component_data')) || [];
-		this.system_data    = JSON.parse(localStorage.getItem('system_data'))    || [];
+		this.component_data = JSON.parse(localStorage.getItem('component_data')) || 
+			{ name: 'Components', data: [] }
+
+		this.system_data    = JSON.parse(localStorage.getItem('system_data')) || 
+			{ name: 'Systems', data: [] }
 
 		// Reference for the current data being managed
-		this.section_data = this[this.section.text.toLowerCase() + '_data'];
-		console.log(this.section_data);
+		this.sectionData = this[this.section.text.toLowerCase() + '_data'];
 
 		// Create the componentTypes from LocalStorage
 		this.component_data.forEach(function(t)
@@ -180,11 +225,32 @@ var vm = new Vue(
 	},
 	events:
 	{
-		// Get detail of selected item to view
-		viewItemDetail: function(name, item)
+		// Sub items for extra data
+		addSubItem: function(index)
 		{
-			this.selectedName = name;
-			this.selectedItem = item;
+			var item = this.sectionData[index];
+			var type = item.type;
+
+			// Replace the sub-item data
+			item.data.push({'newItem': 'type'});
+			//this.section_data.splice(index, 1);
+			//this.section_data.push({ name: cmp.name, type: type, data: cmp.data });	
+			//this.newItem = '';
+			this.saveStorage(this.sectionData);
+		},
+
+		// Remove an item from the root level
+		removeItem: function(index) 
+		{
+			this.sectionData.splice(index, 1);
+			this.saveStorage(this.sectionData);
+		},
+
+		// Save item updates to localStorage
+		saveItem: function(item, key)
+		{
+			this.sectionData[key] = item;
+			this.saveStorage(this.sectionData);
 		},
 
 		// Save JSON code for item
@@ -203,11 +269,11 @@ var vm = new Vue(
 			}
 
 			console.log('saving code to index '+ this.currIndex, jsonData);
-			console.log(this.section_data[this.currIndex]);
+			console.log(this.sectionData[this.currIndex]);
 
 			// Update and save the data
-			this.section_data[this.currIndex] = jsonData;
-			this.saveStorage(this.section_data);
+			this.sectionData[this.currIndex] = jsonData;
+			this.saveStorage(this.sectionData);
 		}
 	},
 	methods: 
@@ -219,7 +285,7 @@ var vm = new Vue(
 				this.editorText = '';
 
 			this.section = view;
-			this.section_data = this[view.text.toLowerCase() + '_data'];
+			this.sectionData = this[view.text.toLowerCase() + '_data'];
 		},
 
 		// Add item to the root level
@@ -228,38 +294,10 @@ var vm = new Vue(
 			var text = this.newItem.trim();
 			if (text)
 			{
-				var nextType = this.section_data.length + 1;
-				this.section_data.push({ name: text, type: nextType, data: {} });
+				var nextType = this.sectionData.length + 1;
+				this.sectionData.data.push({ name: text, type: nextType, data: [] });
 				this.newItem = '';
-				this.saveStorage(this.section_data);
-			}
-		},
-
-		// Remove an item from the root level
-		removeItem: function(index) 
-		{
-			this.section_data.splice(index, 1);
-			this.saveStorage(this.section_data);
-		},
-
-		// Sub items for extra data
-		addSubItem: function(index)
-		{
-			var text = this.newItem.trim();
-			if (text)
-			{
-				var cmp  = this.section_data[index];
-				var type = cmp.type;
-
-				console.log(cmp.data);
-				cmp.data[text] = { }
-				cmp.data[text].type = 'type';
-
-				// Replace the sub-item data
-				this.section_data.splice(index, 1);
-				this.section_data.push({ name: cmp.name, type: type, data: cmp.data });	
-				this.newItem = '';
-				this.saveStorage(this.section_data);
+				this.saveStorage(this.sectionData);
 			}
 		},
 /*
@@ -267,12 +305,12 @@ var vm = new Vue(
 		viewCode: function(index)
 		{
 			// Format the text to be more readable
-			var text = JSON.stringify(this.section_data[index], null, 4);
+			var text = JSON.stringify(this.sectionData[index], null, 4);
 			this.editorText = text;
 			this.currIndex  = index;
 
 			// Get top level data (excluding objects)
-			var item = this.section_data[index];
+			var item = this.sectionData[index];
 			var self = this;
 			this.tl_data = {}
 
