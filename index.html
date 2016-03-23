@@ -43,8 +43,7 @@
 					<li>
 						<div>
 							<span @click="open = !open" class="batch">{{{ icon }}}</span>
-							<item :src="src" :value="item.name" :idx="index" :meta="false"></item>
-							<item :src="src" :value="item.meta" :idx="index" :meta="true" v-if="item.meta"></item>
+							<item :src="src" :value="item.name" :idx="index"></item>
 
 							<button v-if="level > 0" class="batch warn" @click="remove">&#xf14e;</button>
 							<button v-if="level > 0" class="batch conf" @click="addSub">&#xf14c;</button>
@@ -61,8 +60,8 @@
 				<script type="text/x-template" id="item-editable">
 					<span>
 						<span @dblclick="select" v-show="!selected">
-							<i v-if="meta">{{ value }}</i>
-							<span v-if="!meta">{{ value }}</span>
+							<span>{{ values[0] }}</span>
+							<i v-if="values[1]">{{ values[1] }}</i>
 						</span>
 						<input v-el:field v-model="value" :class="{ meta: meta }"
 							@keyup.enter="update"

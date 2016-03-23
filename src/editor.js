@@ -114,15 +114,21 @@ Vue.component('listitem',
 		{
 			console.log('remove item', index);
 			this.item.data.splice(index, 1);
+		},
+
+		updateName: function(value, index)
+		{
+			this.item.name = value;
+			console.log(this.item);
+			this.$dispatch('saveStorage');
 		}
 	},
 	methods:
 	{
-
 		addSub: function()
 		{
 			this.item.data = this.item.data || [];
-			this.item.data.push({name: 'NewItem', meta: 'type', data: [] } );
+			this.item.data.push({name: 'NewItem type', data: [] } );
 			this.$dispatch('saveStorage');
 		},
 
@@ -141,7 +147,6 @@ Vue.component('item',
 {
 	props: {
 		'value': String,
-		'meta' : Boolean,
 		'idx'  : Number,
 		'src'  : { type: Array }
 	},
@@ -149,6 +154,7 @@ Vue.component('item',
 	data: function()
 	{
 		return {
+			values: [],
 			selected: false
 		}
 	},
@@ -156,6 +162,11 @@ Vue.component('item',
 	{
 		hasSrc: function () {
 			return this.src && this.src.length > 0;
+		},
+
+		// Split value to find metadata/item type
+		values: function() {
+			return this.value.split(' ');
 		}
 	},
 	methods:
@@ -173,7 +184,6 @@ Vue.component('item',
 		deselect: function()
 		{
 			this.selected = false;
-			console.log('deselect');
 
 			if (!this.hasSrc)
 			{
@@ -186,8 +196,10 @@ Vue.component('item',
 		{
 			this.selected = false;
 			this.$els.field.style.display = 'none';
-			console.log('updated item '+ this.idx, this.value);
-			//this.$dispatch('saveStorage');
+
+			// Remove extra spaces and update
+			this.value = this.value.replace(/ +/g, ' ').trim();
+			this.$dispatch('updateName', this.value, this.idx);
 		}
 	}
 });
@@ -221,7 +233,6 @@ var vm = new Vue(
 		// Current section settings
 		sectionData: {
  			name: '',
- 			meta: '',
             data: []
 		},
 	},
