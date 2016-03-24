@@ -35,8 +35,9 @@ module.exports = function(grunt)
 						'src/ecs/*.js',
 						'src/app.js'
 					],
-					'editor.js': [ 
-						'src/editor.js'
+					'editor.js': [
+						'src/editor/listitems.js',
+						'src/editor/main.js'
 					]
 				}
 			}
@@ -44,7 +45,7 @@ module.exports = function(grunt)
 
 		watchfiles: {
 			first: {
-				files: ['src/*.js', 'src/ecs/*.js'],
+				files: ['src/*.js', 'src/ecs/*.js', 'src/editor/*.js'],
 				tasks: ['uglify']
 			}/*,
 			second: {

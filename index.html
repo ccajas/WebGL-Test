@@ -39,12 +39,12 @@
 
 				<!-- listitem template -->
 				<script type="text/x-template" id="listitem-template">
-					<li @hover="hover = true" @blur="hover = false">
-						<div>
+					<li>
+						<div @mouseover="info">
 							<span @click="open = !open" class="batch">{{{ section.icon }}}
 								<span v-if="hasData" v-show="!open">{{{ '&#xf01d' }}}</span>
 							</span>
-							<item :src="src" :value="item.name" :idx="index"></item>
+							<editable :src="src" :value="item.name" :idx="index"></editable>
 
 							<button v-if="level > 0" class="batch warn" @click="remove">&#xf14e;</button>
 							<button v-if="level > 0" class="batch conf" @click="addSub">&#xf14c;</button>
@@ -76,25 +76,13 @@
 				</script>
 				
 			</section>
+
 			<section id="viewport">
 				<viewport></viewport>
-				<editable :text-content="editorText" inline-template>
-					<div class="textedit" v-if="viewable">				
-						<ul class="icon-nav">
-							<li><a>Code Editor</a></li>
-							<li><a v-on:click="save"><span class="batch">&#xf059;</span></a></li>
-							<li><a v-on:click="viewable = false"><span class="batch">&#xf0c5;</span></a></li>
-						</ul>
-						<code>
-							<pre v-on:keyup="keyEdit($event)" spellcheck="false"
-							contenteditable="{{ viewable }}" class="language-json">{{ textContent }}</pre>
-						</code>
-					</div>			
-				</editable>
 			</section>
 		</div>
 		<footer>
-			<div v-el:infobar id="info-text">WebGL test</div>
+			<div id="info-text">{{ info }}</div>
 		</footer>
 	</div>
 	<script src="lib/vue.js"></script>

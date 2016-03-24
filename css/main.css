@@ -87,7 +87,7 @@ canvas {
 
 #container {
 	position: fixed;
-	padding-top: 36px;
+	padding: 36px 0px;
 	width: 100%;
 	height: 100%;
 	box-sizing: border-box;
@@ -223,7 +223,7 @@ li {
 #topnav li a {
 	padding: 9px 12px;
 	font-weight: bold;
-	color: #777;
+	color: #aaa;
 }
 
 #topnav li a:hover {
