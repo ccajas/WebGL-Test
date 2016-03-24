@@ -3,7 +3,10 @@ Vue.config.debug = false;
 
 Vue.component('viewport', 
 {
-	props: ['app'],
+	props: {
+		'app' : { type: Object }
+	},
+	template: '<canvas id="draw"></canvas>',
 	data: function()
 	{
 		return {
@@ -13,27 +16,35 @@ Vue.component('viewport',
 	},
 	compiled: function()
 	{
-		console.log('Viewport loaded');
-		var canvas = this.$el;
-		// Set the first Screens into motion
+		// Setup app
+		this.app = new App(null);
 
-		// Todo: Add text nodes for info output
-		//console.log('components:', this.componentTypes);
-
-		// Set up the System Manager
-		var componentLists = [];
-		var systemMgr = new SystemManager(componentLists);
-
-		if (componentLists.length < 1)
-			console.log('No component lists found!');
-
-		// Start the app!
-		this.app = new App(canvas);
-
-		// GL context lost
-		console.log('gl', gl);
+		console.log('Viewport loaded', this.app);
 	},
-	template: '<canvas id="draw"></canvas>'
+	watch:
+	{
+		// Initialize the app
+		app: function()
+		{
+			var canvas = this.$el;
+
+			// Set up the System Manager
+			var componentLists = [];
+			var systemMgr = new SystemManager(componentLists);
+
+			if (componentLists.length < 1)
+				console.log('No component lists found!');
+
+			// Start the app!
+			this.app.canvas = canvas;
+			this.app.init();
+
+			console.log('app started');
+
+			// Send back new ECS data
+			this.$dispatch('updateECS', this.app);
+		}
+	}
 });
 
 /* Editable text component */
@@ -94,11 +105,9 @@ var vm = new Vue(
 		info: 'WebGL test',
 		component_data: null,
 		system_data: null,
-		app: null,
+		app: {},
 
 		// Data for ECS
-		componentTypes: [],
-		systems: [],
 		section: {},
 		sections: [
 			{ name: 'Component', 	  icon: '&#xf01c;', color: '#fb0' },
@@ -136,17 +145,7 @@ var vm = new Vue(
 		// Attach sources for data entry
 		this.sections[1].src = this.component_data.data;
 
-		// Create the componentTypes from LocalStorage
-		this.component_data.data.forEach(function(t)
-		{
-			self.componentTypes.push(new ComponentType(t.name));
-		});
-
-		// Display any error messages
-		if (!gl) 
-			this.$emit('updateInfo', 'WebGL required');
-		if (app.currentScreen == null)
-			this.$emit('updateInfo', 'No screens found!');
+		console.log(this.app);
 	},
 	events:
 	{
@@ -161,6 +160,30 @@ var vm = new Vue(
 		updateInfo: function(msg)
 		{
 			this.info = msg;
+		},
+
+		updateECS: function(app)
+		{
+			this.app = app;
+			console.log('Update ECS');
+
+			var self = this;
+
+			// Add ECS data to the app
+			this.component_data.data.forEach(function(t)
+			{
+				console.log(self.app);
+				self.app.componentTypes.push(new ComponentType(t.name));
+			});
+
+			this.system_data.data.forEach(function(t)
+			{
+				self.app.addSystem(t.name);
+			});
+
+			// Display any error messages
+			if (this.app.currentScreen == null)
+				this.$emit('updateInfo', 'No screens found!');
 		}
 	},
 	methods: 
@@ -188,7 +211,10 @@ var vm = new Vue(
 
 				// Add appropriate object based on section
 				if (this.section.name == 'Component')
-					this.componentTypes.push(new ComponentType(text));
+					this.app.componentTypes.push(new ComponentType(text));
+
+				if (this.section.name == 'System')
+					this.app.addSystem(text);
 			}
 		}
 	},

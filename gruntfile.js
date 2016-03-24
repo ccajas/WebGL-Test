@@ -34,6 +34,7 @@ module.exports = function(grunt)
 						'src/gl.js',
 						'src/ecs/*.js',
 						'src/screen/*.js',
+						'src/content.js',
 						'src/app.js'
 					],
 					'editor.js': [
@@ -49,6 +50,8 @@ module.exports = function(grunt)
 				files: [
 					'src/*.js', 
 					'src/ecs/*.js',
+					'src/app.js',
+					'src/content.js',
 					'src/screen/*.js',
 					'src/editor/*.js'
 				],

@@ -149,8 +149,8 @@ ComponentMgr = (function()
 })();
 
 /**
-* Aliases for {@link ComponentMgr}
+* Aliase for {@link ComponentMgr}
 * @class
 */
 
-ComponentManager = ComponentMgr;
+var ComponentManager = ComponentMgr;

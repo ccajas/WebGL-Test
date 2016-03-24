@@ -8,9 +8,21 @@ App = (function()
 {
 	'use strict';
 
-	function App(canvas)
+	function App(canvas) 
 	{
-		this.init(canvas);
+		this.canvas = canvas;
+
+		// Data for ECS
+		this.componentTypes = [];
+		this.systems = [];
+		this.componentMgr = new ComponentManager();
+
+		// Screen handling
+		this.currentScreen = null;
+		this.nextScreen = null;
+
+		// Content handling
+		this.content = new ContentManager();
 	}
 
 	// Internal variables
@@ -18,27 +30,17 @@ App = (function()
 		elapsed,
 		lastFrame;
 
-	// Screen handling
-	var currentScreen,
-		nextScreen;
-
 	// GL error messages
 	var e_noGL = "Unable to initialize WebGL. Your browser may not support it, or it's "+
 				 "disabled in your browser settings.";
 
 	App.prototype =
 	{
-		init: function(canvas) 
+		init: function() 
 		{
-			var canvas = canvas || document.getElementById("draw");
+			var canvas = this.canvas || document.getElementById("draw");
 
-			// Set the first Screens into motion
-			//var screen = new InputScreen(null, 'screen 1');
-			//var screen2 = new InputScreen(null, 'screen 2');
-
-			// Add text nodes for info output
-			//infoEl.appendChild(infoNode);
-			
+			// Setup GL context			
 			if (initGL(canvas, e_noGL))
 			{
 				// Initialize first screen
@@ -50,6 +52,34 @@ App = (function()
 				lastFrame = Date.now();
 				
 				this.update(canvas);
+			}
+		},
+
+		addSystem: function(name)
+		{
+			// Look for a system script first
+			var path = 'app/systems/'+ name +'.js';
+			var self = this;
+
+			// Load content
+			var script = this.content.load('Script')(path, '_'+ name);
+
+			script.onload = function() 
+			{
+				//do stuff with the script
+				console.log('script loaded!');
+				var loadedSystem = window[name];
+
+				console.log(loadedSystem);
+				self.systems.push(new loadedSystem(name, self.componentMgr));	
+			}
+
+			script.onerror = function()
+			{
+				console.log('Failed to find script! Create system "'+ name +'"');
+				self.systems.push(new System(name, self.componentMgr));	
+
+				console.log('systems', self.systems);
 			}
 		},
 

@@ -13,11 +13,13 @@ EntitySystem = (function()
 	 * EntitySystem constructor, setup from the ComponentManager
 	 *
 	 * @memberOf EntitySystem
+	 * @param {String} handle the name for this EntitySystem
 	 * @param {ComponentManager} componentManager manager to get Components from
 	 */
 
-	function EntitySystem(componentManager)
+	function EntitySystem(handle, componentManager)
 	{
+		this.handle 	   = handle;
 		this.totalEntities = 0;
 		this.componentMgr  = componentManager;
 		this.components    = componentManager.components;
@@ -51,3 +53,11 @@ EntitySystem = (function()
 	return EntitySystem;
 
 })();
+
+
+/**
+* Aliase for {@link EntitySystem}
+* @class
+*/
+
+var System = EntitySystem;
