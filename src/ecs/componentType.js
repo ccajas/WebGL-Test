@@ -21,7 +21,7 @@ ComponentType = (function()
 	{
 		this.name = name;
 		this.type = type;
-		this.data = { }
+		this.data = [ ];
 	}
 
 	return ComponentType;

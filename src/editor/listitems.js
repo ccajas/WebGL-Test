@@ -34,14 +34,12 @@ Vue.component('listitem',
 	{
 		removeDataItem: function (index)
 		{
-			console.log('remove item', index);
 			this.item.data.splice(index, 1);
 		},
 
 		updateName: function(value, index)
 		{
 			this.item.name = value;
-			console.log(this.item);
 			this.$dispatch('saveStorage');
 		}
 	},

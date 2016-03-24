@@ -3,6 +3,7 @@ Vue.config.debug = false;
 
 Vue.component('viewport', 
 {
+	props: ['app'],
 	data: function()
 	{
 		return {
@@ -27,7 +28,7 @@ Vue.component('viewport',
 			console.log('No component lists found!');
 
 		// Start the app!
-		var app = new App(canvas);
+		this.app = new App(canvas);
 
 		// GL context lost
 		console.log('gl', gl);
@@ -93,6 +94,7 @@ var vm = new Vue(
 		info: 'WebGL test',
 		component_data: null,
 		system_data: null,
+		app: null,
 
 		// Data for ECS
 		componentTypes: [],
@@ -140,7 +142,11 @@ var vm = new Vue(
 			self.componentTypes.push(new ComponentType(t.name));
 		});
 
-		if (!gl) this.$emit('updateInfo', 'WebGL required');
+		// Display any error messages
+		if (!gl) 
+			this.$emit('updateInfo', 'WebGL required');
+		if (app.currentScreen == null)
+			this.$emit('updateInfo', 'No screens found!');
 	},
 	events:
 	{
