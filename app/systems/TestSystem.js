@@ -17,7 +17,7 @@ TestSystem = (function()
 
 	function TestSystem(handle, componentManager) 
 	{
-		System.call(this, handle, componentManager);
+		EntitySystem.call(this, handle, componentManager);
 		console.log('TestSystem object', this);
 	}
 

@@ -16,6 +16,7 @@ App = (function()
 		this.componentTypes = [];
 		this.systems = [];
 		this.componentMgr = new ComponentManager();
+		console.log('componentMgr', this.componentMgr);
 
 		// Screen handling
 		this.currentScreen = null;

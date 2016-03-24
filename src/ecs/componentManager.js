@@ -9,20 +9,21 @@ ComponentMgr = (function()
 {
 	'use strict';
 
-	// The next entity in the list
-	var next = 0;
-
-	// Component and template groups
-	var components = [];
-	var entityTemplates = {};
-
 	/**
 	 * ComponentMgr constructor
 	 *
 	 * @function
 	 * @memberOf ComponentMgr
 	 */
-	function ComponentMgr() {}
+	function ComponentMgr() 
+	{
+		// The next entity in the list
+		this.next = 0;
+
+		// Component and template groups
+		this.components      = [];
+		this.entityTemplates = {}
+	}
 
 	/**
 	 * Wrapper to add entity templates
@@ -35,7 +36,7 @@ ComponentMgr = (function()
 
 	ComponentMgr.addEntityTemplate = function(templateName, template)
 	{
-		entityTemplates.push({ name: templateName, template: template });
+		this.entityTemplates.push({ name: templateName, template: template });
 	}
 
 	/**
@@ -57,16 +58,16 @@ ComponentMgr = (function()
 				entity   = null;
 
 			// Check if a valid template exists first
-			if (entityTemplates.hasOwnProperty(templateName))
+			if (this.entityTemplates.hasOwnProperty(templateName))
 			{
-				template = copyTemp = entityTemplates.templateName;
+				template = this.entityTemplates.templateName;
 
 				// Call method to create new template using the next available ID
-				entity = copyTemp.DeepClone(nextEntity);
+				entity = copyTemp.DeepClone(template);
 
 				// Add each component
 				for (comp in entity.cmpList)
-					components[comp.type][next] = comp;
+					this.components[comp.type][this.next] = comp;
 			}
 
 			return entity;
@@ -76,11 +77,11 @@ ComponentMgr = (function()
 		{
 			// Add each component
 			for (comp in newTemp.cmpList)
-				components[comp.type][next] = comp;
+				this.components[comp.type][this.next] = comp;
 		}
 
 		// Finish adding components for entity
-		next++;
+		this.next++;
 	}
 
 	/**
@@ -94,7 +95,7 @@ ComponentMgr = (function()
 	ComponentMgr.disableEntity = function(entityID)
 	{
 		// Check every list for proper updating
-		for (cmpArray in components.groups)
+		for (cmpArray in this.components.groups)
 		{
 			if (cmpArray[entityID] != null)
 				cmpArray[entityID].live = false;
@@ -110,14 +111,14 @@ ComponentMgr = (function()
 
 	ComponentMgr.removeEntities = function()
 	{
-		var total = next;
+		var total = this.next;
 
 		for (var entity = total - 1; entity >= 0; --entity)
 		{
 			var remove = true;
 
 			// Check every array if all components aren't live
-			for (cmpArray in components)
+			for (cmpArray in this.components)
 			{
 				if (cmpArray[entity] != null && cmpArray[entity].live)
 					remove = false;
@@ -126,8 +127,8 @@ ComponentMgr = (function()
 			if (remove)
 			{
 				// Overwrite this entity's compnents
-				var last = next - 1;
-				foreach (cmpArray in components)
+				var last = this.next - 1;
+				foreach (cmpArray in this.components)
 				{
 					// Update entity IDs
 					cmpArray[entity] = cmpArray[last];
@@ -138,7 +139,7 @@ ComponentMgr = (function()
 				}
 
 				// Reduce entity count
-				next--;
+				this.next--;
 			}
 		}
 		// Finished removing entities
