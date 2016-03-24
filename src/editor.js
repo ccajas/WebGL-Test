@@ -27,7 +27,10 @@ Vue.component('viewport',
 			console.log('No component lists found!');
 
 		// Start the app!
-		var app = new App(canvas);		
+		var app = new App(canvas);
+
+		// GL context lost
+		console.log('gl', gl);
 	},
 	template: '<canvas id="draw"></canvas>'
 });
@@ -84,16 +87,18 @@ Vue.component('editable',
 Vue.component('listitem',
 {
 	props: {
-		'level': Number,
-		'index': Number,
-		'item' : { type: Object },
-		'icon' : String,
-		'src'  : Array
+		'level'  : Number,
+		'index'  : Number,
+		'section': { type: Object },
+		'item'   : { type: Object },
+		'src'    : Array
 	},
+
 	template: '#listitem-template',
 	data: function()
 	{
 		return {
+			hover: false,
 			open: true,
 			selected: false
 		}
@@ -102,8 +107,8 @@ Vue.component('listitem',
 	{
 		hasData: function () 
 		{
-			var hasData =  this.item.data && this.item.data.length > 0;		
-			this.icon = hasData || this.level < 2 ? this.icon : '&#xf0ab;';
+			var hasData = this.item.data && this.item.data.length > 0;		
+			//if (!hasData && this.level > 1) this.section.icon = '&#xf0ab;';
 
 			return hasData;
 		}
@@ -215,14 +220,10 @@ var vm = new Vue(
 		component_data: null,
 		system_data: null,
 
-		// Info for editable text area
-		editorText: 'Add your text here!',
-		currIndex: -1,
-
 		// Data for ECS
 		componentTypes: [],
 		systems: [],
-		section: '',
+		section: {},
 		sections: [
 			{ name: 'Component', 	  icon: '&#xf01c;', color: '#fb0' },
 			{ name: 'System', 		  icon: '&#xf04e;', color: '#bf7' },
@@ -241,16 +242,18 @@ var vm = new Vue(
 	{
 		var self = this;
 
-		// Set initial component type and section
+		// Set default component type and section
 		var type = 0;
 		this.section = this.sections[0];
 
 		// Setup data groups
-		this.component_data = JSON.parse(localStorage.getItem('component_data')) || 
-			{ name: 'Components', data: [] }
-
-		this.system_data    = JSON.parse(localStorage.getItem('system_data')) || 
-			{ name: 'Systems', data: [] }
+		this.sections.forEach(function(section)
+		{
+			console.log(section);
+			var name = section.name.toLowerCase() + '_data';
+			self[name] = JSON.parse(localStorage.getItem(name)) || 
+				{ name: section.name +'s', data: [] }
+		});
 
 		// Reference for the current data being managed
 		this.sectionData = this[this.section.name.toLowerCase() + '_data'];
@@ -259,15 +262,13 @@ var vm = new Vue(
 		this.sections[0].src = [];
 		this.sections[1].src = this.component_data.data;
 
-		console.log('sections', this.sections);
-
 		// Create the componentTypes from LocalStorage
 		this.component_data.data.forEach(function(t)
 		{
 			self.componentTypes.push(new ComponentType(t.name));
 		});
 
-		console.log('componentTypes', this.componentTypes);
+		if (!gl) this.$emit('updateInfo', 'WebGL required');
 	},
 	events:
 	{
@@ -276,6 +277,12 @@ var vm = new Vue(
 		{
 			var name = this.section.name.toLowerCase() + '_data';
 			localStorage.setItem(name, JSON.stringify(this.sectionData));
+		},
+
+		// Update info bar
+		updateInfo: function(msg)
+		{
+			this.$els.infobar.innerText = msg;
 		}
 	},
 	methods: 

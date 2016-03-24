@@ -26,24 +26,6 @@ App = (function()
 	var e_noGL = "Unable to initialize WebGL. Your browser may not support it, or it's "+
 				 "disabled in your browser settings.";
 
-	// Mouse events
-
-	// Only detect mouse movement when button is pressed
-/*
-	App.onMouseMove = function(event) 
-	{
-		if (!mouseDown) return;
-
-		var newX = event.clientX;
-		var newY = event.clientY;
-
-		thetaX += (newX - lastMouseX) / (m.PI * 90);
-		thetaY += (newY - lastMouseY) / (m.PI * 60);
-
-		lastMouseX = newX;
-		lastMouseY = newY;
-	}*/
-
 	App.prototype =
 	{
 		init: function(canvas) 

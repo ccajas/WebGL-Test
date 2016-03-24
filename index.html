@@ -29,20 +29,21 @@
 				</ul>
 				<div class="input-w">
 					<input v-model="newItem" v-on:keyup.enter="addItem" 
-						placeholder="enter new {{ section.name }}"/>
+						placeholder="Enter new {{ section.name }}"/>
 				</div>
 
 				<ul class="hierarchy">
-					<listitem :item="sectionData" :icon="section.icon" :src="section.src" 
-						:level="0" :index="$index">
+					<listitem :item="sectionData" :section="section" :level="0" :index="$index">
 					</listitem>
 				</ul>
 
 				<!-- listitem template -->
 				<script type="text/x-template" id="listitem-template">
-					<li>
+					<li @hover="hover = true" @blur="hover = false">
 						<div>
-							<span @click="open = !open" class="batch">{{{ icon }}}</span>
+							<span @click="open = !open" class="batch">{{{ section.icon }}}
+								<span v-if="hasData" v-show="!open">{{{ '&#xf01d' }}}</span>
+							</span>
 							<item :src="src" :value="item.name" :idx="index"></item>
 
 							<button v-if="level > 0" class="batch warn" @click="remove">&#xf14e;</button>
@@ -50,7 +51,7 @@
 						</div>						
 						<ul class="sub" v-if="hasData" v-show="open">
 							<listitem v-for="item in item.data" :level="level+1" :item="item" 
-								:src="src" :index="$index" :icon="icon">
+								:index="$index" :section="section">
 							</listitem>
 						</ul>
 					</li>
@@ -60,7 +61,7 @@
 				<script type="text/x-template" id="item-editable">
 					<span>
 						<span @dblclick="select" v-show="!selected">
-							<span>{{ values[0] }}</span>
+							{{ values[0] }}
 							<i v-if="values[1]">{{ values[1] }}</i>
 						</span>
 						<input v-el:field v-model="value" :class="{ meta: meta }"
@@ -68,9 +69,9 @@
 							@keyup.esc="deselect" @blur="deselect"/>
 
 						<!-- custom combo box -->
-						<ul v-if="hasSrc" @keyup.esc="deselect" @blur="deselect">
+						<!-- <ul v-if="hasSrc" @keyup.esc="deselect" @blur="deselect">
 							<li>Source</li>
-						</ul>
+						</ul> -->
 					</span>
 				</script>
 				
@@ -92,6 +93,9 @@
 				</editable>
 			</section>
 		</div>
+		<footer>
+			<div v-el:infobar id="info-text">WebGL test</div>
+		</footer>
 	</div>
 	<script src="lib/vue.js"></script>
 	<script src="lib/prism.js"></script>
