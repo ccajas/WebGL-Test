@@ -4,7 +4,9 @@ Vue.config.debug = false;
 Vue.component('viewport', 
 {
 	props: {
-		'app' : { type: Object }
+		'app' 	 	: { type: Object },
+		'newSystem' : String,
+		'newCtype'	: String
 	},
 	template: '<canvas id="draw"></canvas>',
 	data: function()
@@ -18,8 +20,22 @@ Vue.component('viewport',
 	{
 		// Setup app
 		this.app = new App(null);
+	},
+	computed:
+	{
+		newCtype: function()
+		{
+			// Send new info
+			this.newCtype = this.app.notify.newComponentType;
+			this.$dispatch('updateInfo', 'Added component type '+ this.newCtype);
+		},
 
-		console.log('Viewport loaded', this.app);
+		newSystem: function()
+		{
+			// Send new info
+			this.newSystem = this.app.notify.newSystem;
+			this.$dispatch('updateInfo', 'Added new system "'+ this.newSystem +'"');
+		}
 	},
 	watch:
 	{
@@ -37,9 +53,9 @@ Vue.component('viewport',
 
 			// Start the app!
 			this.app.canvas = canvas;
+			this.newSystem 	= this.app.notify.newSystem;
+			this.newCtype  	= this.app.notify.newComponentTypes;
 			this.app.init();
-
-			console.log('app started');
 
 			// Send back new ECS data
 			this.$dispatch('updateECS', this.app);

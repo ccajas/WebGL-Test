@@ -24,6 +24,13 @@ App = (function()
 
 		// Content handling
 		this.content = new ContentManager();
+
+		// App notificatons
+		this.notify =
+		{
+			newSystem: '',
+			newComponentType: ''
+		}
 	}
 
 	// Internal variables
@@ -56,71 +63,33 @@ App = (function()
 			}
 		},
 
-		addSystem: function(name)
+		addSystem: function(systemName)
 		{
 			// Look for a system script first
 			var dir  = 'app/systems/';
-			var path = dir + name +'.js';
+			var path = dir + systemName +'.js';
 			var self = this;
 
 			// Load content
-			var script = this.content.load('Script')(path, '_'+ name);
+			var script = this.content.load('Script')(path,
+			{ 
+				load: function() 
+				{
+					//do stuff with the script
+					console.log('script loaded!');
+					var loadedSystem = window[systemName];
+					self.systems.push(new loadedSystem(systemName, self.componentMgr));	
+				},
 
-			script.onload = function() 
-			{
-				//do stuff with the script
-				console.log('script loaded!');
-				var loadedSystem = window[name];
+				error: function()
+				{
+					console.log('Failed to find script! Create system "'+ systemName +'"');
+					self.systems.push(new System(systemName, self.componentMgr));
+				}
+			});
 
-				console.log(loadedSystem);
-				self.systems.push(new loadedSystem(name, self.componentMgr));	
-			}
-
-			// If script isn't found, make the System and file from scratch
-			script.onerror = function()
-			{
-				console.log('Failed to find script! Create system "'+ name +'"');
-				self.systems.push(new System(name, self.componentMgr));	
-
-				// Create the script
-				var script = 
-					name +' = (function()'+
-					'{'+
-					'	function TestSystem(handle, componentManager)'+
-					'	{'+
-					'		EntitySystem.call(this, handle, componentManager)'+
-					'		console.log(\''+ name +' object\', this);'+
-					'	}'+
-					'	'+ name +'.prototype = Object.create(EntitySystem.prototype,'+
-					'	{'+
-					'		process:'+
-					'		{'+
-					'			value: function(elapsed)'+
-					'			{'+
-					'				// Display some info'+
-					'				console.log(\''+ name +' is processing\');'+
-
-					'				return EntitySystem.prototype.process.call(this, elapsed);'+
-					'			}'+
-					'		}'+
-					'	});'+
-
-					'	return TestSystem;'+
-
-					'})();';
-
-				var blob = new Blob([script], {type : 'text/javascript'});
-				var reader = new FileReader();
-				
-				reader.addEventListener("loadend", function() {
-					console.log('blob content', reader.result);
-				   // reader.result contains the contents of blob as a typed array
-				});
-				reader.readAsArrayBuffer(blob);
-			
-				//console.log('blob', blob);
-				console.log('systems', self.systems);
-			}
+			console.log('systems', systemName);
+			this.notify.newSystem = systemName;
 		},
 
 		// Draw the scene

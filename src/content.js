@@ -174,19 +174,24 @@ ContentManager = (function()
 	 * @function
 	 * @memberOf ContentManager
 	 * @param {String} file the script's file name
-	 * @param {String} type the type of shader
+	 * @param {Object} funcs functions called on file load/error
 	 * @return {Promise} Promise containing XHR response
 	 */	
 
-	var loadScript = function(file, name)
+	var loadScript = function(file, funcs)
 	{
 		var scriptDOM = document.createElement('script');
 
-        scriptDOM.setAttribute("type", "text/javascript");
-        scriptDOM.setAttribute("src", file);
+		scriptDOM.type = "text\/javascript";
+		scriptDOM.src  = file; 
 
         // Add it in the head tag
         document.head.appendChild(scriptDOM);
+        console.log(funcs);
+
+        // Call appropriate function
+        scriptDOM.onload  = funcs.load;
+        scriptDOM.onerror = funcs.error;
 
         return scriptDOM;
 	}
@@ -219,7 +224,7 @@ ContentManager = (function()
 					(cType == 'Shader-fs') ? loadShader    (file, cType) :
 					(cType == 'Model')     ? loadModelMesh (file, name)  :
 					(cType == 'Texture')   ? loadTexture   (file, name)  :
-					(cType == 'Script')    ? loadScript	   (file, name)  :
+					(cType == 'Script')    ? loadScript	   (file, name) :
 					(cType == 'Content')   ? self.loadJSON (file, name)  :
 					null;
 				
