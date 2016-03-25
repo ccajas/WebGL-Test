@@ -38,6 +38,7 @@ module.exports = function(grunt)
 						'src/app.js'
 					],
 					'editor.js': [
+						'src/editor/lib/*.js',
 						'src/editor/listitems.js',
 						'src/editor/main.js'
 					]

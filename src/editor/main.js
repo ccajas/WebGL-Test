@@ -199,7 +199,7 @@ var vm = new Vue(
 		},
 
 		// Add item to the root level
-		addItem: function() 
+		addItem: function()
 		{
 			var text = this.newItem.trim();
 			if (text)

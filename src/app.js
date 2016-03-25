@@ -59,7 +59,8 @@ App = (function()
 		addSystem: function(name)
 		{
 			// Look for a system script first
-			var path = 'app/systems/'+ name +'.js';
+			var dir  = 'app/systems/';
+			var path = dir + name +'.js';
 			var self = this;
 
 			// Load content
@@ -75,11 +76,49 @@ App = (function()
 				self.systems.push(new loadedSystem(name, self.componentMgr));	
 			}
 
+			// If script isn't found, make the System and file from scratch
 			script.onerror = function()
 			{
 				console.log('Failed to find script! Create system "'+ name +'"');
 				self.systems.push(new System(name, self.componentMgr));	
 
+				// Create the script
+				var script = 
+					name +' = (function()'+
+					'{'+
+					'	function TestSystem(handle, componentManager)'+
+					'	{'+
+					'		EntitySystem.call(this, handle, componentManager)'+
+					'		console.log(\''+ name +' object\', this);'+
+					'	}'+
+					'	'+ name +'.prototype = Object.create(EntitySystem.prototype,'+
+					'	{'+
+					'		process:'+
+					'		{'+
+					'			value: function(elapsed)'+
+					'			{'+
+					'				// Display some info'+
+					'				console.log(\''+ name +' is processing\');'+
+
+					'				return EntitySystem.prototype.process.call(this, elapsed);'+
+					'			}'+
+					'		}'+
+					'	});'+
+
+					'	return TestSystem;'+
+
+					'})();';
+
+				var blob = new Blob([script], {type : 'text/javascript'});
+				var reader = new FileReader();
+				
+				reader.addEventListener("loadend", function() {
+					console.log('blob content', reader.result);
+				   // reader.result contains the contents of blob as a typed array
+				});
+				reader.readAsArrayBuffer(blob);
+			
+				//console.log('blob', blob);
 				console.log('systems', self.systems);
 			}
 		},
@@ -94,7 +133,7 @@ App = (function()
 			var time = lastFrame / 5000;
 
 			// Check for screen
-            if (currentScreen == null)
+            if (this.currentScreen == null)
             {
                 // Something went wrong
                 // Show purple screen of doom
@@ -105,11 +144,11 @@ App = (function()
             }
             // Update screens
             else
-                nextScreen = currentScreen.update(elapsed, canvas);
+                this.nextScreen = this.currentScreen.update(elapsed, canvas);
 
             // Swap screen for the next frame
-            if (nextScreen != currentScreen)
-                currentScreen = nextScreen;
+            if (this.nextScreen != this.currentScreen)
+                this.currentScreen = this.nextScreen;
 
             // Get next frame
 			var self = this;

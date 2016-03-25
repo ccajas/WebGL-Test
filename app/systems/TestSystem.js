@@ -26,7 +26,6 @@ TestSystem = (function()
 	TestSystem.prototype = Object.create(EntitySystem.prototype,
 	{
 		// Specific functions for TestScreen object
-
 		process:
 		{
 			value: function(elapsed)
