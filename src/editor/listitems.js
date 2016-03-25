@@ -73,6 +73,7 @@ Vue.component('editable',
 	props: {
 		'value': String,
 		'idx'  : Number,
+		'lv'   : Number,
 		'src'  : { type: Array }
 	},
 	template: '#item-editable',
@@ -80,18 +81,31 @@ Vue.component('editable',
 	{
 		return {
 			values: [],
+			srcValues: [],
 			tempValue: '',
 			selected: false
 		}
 	},
 	computed: 
 	{
-		hasSrc: function () {
-			return this.src && this.src.length > 0;
+		hasSrc: function() 
+		{
+			var pos = this.lv - 1;
+			return this.src && this.src[pos] && this.src[pos].length > 0;
 		},
 
 		// Split value to find metadata/item type
-		values: function() {
+		values: function() 
+		{
+			// Load value from index if source is founc
+			if (this.hasSrc 
+				&& !isNaN(parseFloat(this.value)) 
+				&& isFinite(this.value))
+			{
+				// Test for decimal numbers only
+				return this.src[this.lv - 1][this.value].name.split(' ');
+			}
+
 			return this.value.split(' ');
 		}
 	},
@@ -102,11 +116,9 @@ Vue.component('editable',
 			this.selected  = true;
 			this.tempValue = this.value;
 
-			if (!this.hasSrc)
-			{
-				this.$els.field.style.display = 'inline';
-				this.$els.field.focus();
-			}
+			// Focus the field
+			this.$els.field.style.display = 'inline';
+			this.$els.field.focus();
 		},
 
 		deselect: function()
@@ -115,9 +127,24 @@ Vue.component('editable',
 			this.selected = false;
 			this.value    = this.tempValue;
 
-			if (!this.hasSrc)
+			this.$els.field.style.display = 'none';
+		},
+
+		updateCombo: function()
+		{
+			if (!this.hasSrc) return;
+
+			// Reset found values
+			this.srcValues = [];
+			var src = this.src[this.lv - 1];
+
+			for (key in src)
 			{
-				this.$els.field.style.display = 'none';
+				if (src[key].name.indexOf(this.value) !== -1)
+				{
+					var name = src[key].name;
+					this.srcValues.push({ 'name': name, 'key' : key });
+				}
 			}
 		},
 
@@ -133,7 +160,15 @@ Vue.component('editable',
 			// Only update if text isn't left blank
 			if (text)
 			{
-				this.value = text.replace(/ +/g, ' ');
+				if (this.hasSrc)
+				{
+					this.value = (this.srcValues.length > 0) ? 
+						this.srcValues[0].key : 
+						this.tempValue;
+				}
+				else
+					this.value = text.replace(/ +/g, ' ');
+
 				this.tempValue = this.value;
 				this.$dispatch('updateName', this.value, this.idx);
 			}

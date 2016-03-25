@@ -304,6 +304,20 @@ ul.hierarchy ul {
 	padding-left: 20px;
 }
 
+ul.hierarchy .combobox {
+	display: none;
+	position: absolute;
+	z-index: 20;
+	background: #272727;
+}
+
+ul.hierarchy .combobox li {
+	margin-left: 0px;
+	display: block;
+	padding-top: 5px;
+	height: 18px;
+}
+
 ul.sub li {
 	font-weight: normal;
 }

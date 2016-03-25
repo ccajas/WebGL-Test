@@ -44,14 +44,14 @@
 							<span v-on:click="open = !open" class="batch">{{{ section.icon }}}
 								<span v-if="hasData" v-show="!open">{{{ '&#xf01d' }}}</span>
 							</span>
-							<editable :src="src" :value="item.name" :idx="index"></editable>
+							<editable :src="section.src" :lv="level" :value="item.name" :idx="index"></editable>
 
 							<button v-if="level > 0" class="batch warn" v-on:click="remove">&#xf14e;</button>
 							<button v-if="level > 0" class="batch conf" v-on:click="addSub">&#xf14c;</button>
 						</div>						
 						<ul class="sub" v-if="hasData" v-show="open">
-							<listitem v-for="item in item.data" :level="level+1" :item="item" 
-								:index="$index" :section="section">
+							<listitem v-for="item in item.data" 
+								:level="level+1" :item="item" :index="$index" :section="section" :src="section.src">
 							</listitem>
 						</ul>
 					</li>
@@ -64,14 +64,10 @@
 							{{ values[0] }}
 							<i v-if="values[1]">{{ values[1] }}</i>
 						</span>
-						<input v-el:field v-model="value" :class="{ meta: meta }"
+						<input v-el:field v-model="value"
+							v-on:keyup="updateCombo"
 							v-on:keyup.enter="update"
 							v-on:keyup.esc="deselect" v-on:blur="deselect"/>
-
-						<!-- custom combo box -->
-						<!-- <ul v-if="hasSrc" v-on:keyup.esc="deselect" v-on:blur="deselect">
-							<li>Source</li>
-						</ul> -->
 					</span>
 				</script>
 				

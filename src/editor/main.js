@@ -126,10 +126,30 @@ var vm = new Vue(
 		// Data for ECS
 		section: {},
 		sections: [
-			{ name: 'Component', 	  icon: '&#xf01c;', color: '#fb0' },
-			{ name: 'System', 		  icon: '&#xf04e;', color: '#bf7' },
-			{ name: 'EntityTemplate', icon: '&#xf020;', color: '#7ff' },
-			{ name: 'ScreenElement',  icon: '&#xf11e;', color: '#0bf' }
+			{ 
+				name: 'Component', 	  
+				icon: '&#xf01c;', 
+				color: '#fb0',
+				src: []
+			},
+			{ 
+				name: 'System',	  
+				icon: '&#xf04e;', 
+				color: '#bf7',
+				src: [ [], 'Component' ]
+			},
+			{ 
+				name: 'EntityTemplate', 
+				icon: '&#xf020;', 
+				color: '#7ff',
+				src: [ [], 'Component' ]
+			},
+			{ 
+				name: 'ScreenElement',  
+				icon: '&#xf11e;', 
+				color: '#0bf',
+				src: []
+			}
 		],
 
 		// Current section settings
@@ -141,8 +161,6 @@ var vm = new Vue(
 
 	compiled: function()
 	{
-		var self = this;
-
 		// Set default component type and section
 		var type = 0;
 		this.section = this.sections[0];
@@ -151,17 +169,31 @@ var vm = new Vue(
 		this.sections.forEach(function(section)
 		{
 			var name = section.name.toLowerCase() + '_data';
-			self[name] = JSON.parse(localStorage.getItem(name)) || 
+			this[name] = JSON.parse(localStorage.getItem(name)) || 
 				{ name: section.name +'s', data: [] }
-		});
+
+		}, this);
+
+		// Setup data sources
+		this.sections.forEach(function(section)
+		{
+			for (var i = 0; i < section.src.length; i++)
+			{
+				// Replace strings with arrays for data sources
+				if (section.src[i].length > 0)
+				{
+					var name = section.src[i].toLowerCase() + '_data';
+					console.log(this[name].data);
+					section.src[i] = this[name].data;
+				}
+			}
+
+			console.log(section.src);
+
+		}, this);
 
 		// Reference for the current data being managed
 		this.sectionData = this[this.section.name.toLowerCase() + '_data'];
-
-		// Attach sources for data entry
-		this.sections[1].src = this.component_data.data;
-
-		console.log(this.app);
 	},
 	events:
 	{
@@ -188,7 +220,6 @@ var vm = new Vue(
 			// Add ECS data to the app
 			this.component_data.data.forEach(function(t)
 			{
-				console.log(self.app);
 				self.app.componentTypes.push(new ComponentType(t.name));
 			});
 
