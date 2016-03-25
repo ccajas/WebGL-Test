@@ -70,6 +70,15 @@ App = (function()
 			this.notify.newSystem = systemName;
 		},
 
+		addContent: function(fileName, type)
+		{
+			// Look in the assets folder first
+			var dir = 'app/assets/';
+			var path = dir + fileName;
+
+			this.content.load('Model')(path, path);
+		},
+
 		// Draw the scene
 
 		update: function(canvas)

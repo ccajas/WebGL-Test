@@ -273,6 +273,7 @@ li {
 .icon-nav li:nth-child(2) a.hl { color: #bf7; }
 .icon-nav li:nth-child(3) a.hl { color: #7ff; }
 .icon-nav li:nth-child(4) a.hl { color: #0bf; }
+.icon-nav li:nth-child(5) a.hl { color: #b0f; }
 
 ul.hierarchy {
 	padding: 8px;

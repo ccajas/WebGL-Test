@@ -59,7 +59,7 @@ ContentManager = (function()
 
 	var loadError = function(response)
 	{
-		console.error("request failed!");	
+		console.error("request failed!", response);	
 	}
 
 	/**

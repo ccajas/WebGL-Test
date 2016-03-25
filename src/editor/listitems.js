@@ -132,15 +132,14 @@ Vue.component('editable',
 			// Reset found values
 			this.srcValues = [];
 			var valueNames = [];
-			var src = this.src[this.lv - 1];
 
-			for (key in src)
+			for (key in this.src)
 			{
 				var match = this.value.toLowerCase();
 
-				if (src[key].name.toLowerCase().indexOf(match) !== -1)
+				if (this.src[key].name.toLowerCase().indexOf(match) !== -1)
 				{
-					var name = src[key].name;
+					var name = this.src[key].name;
 					this.srcValues.push({ 'name': name, 'key' : key });
 					valueNames.push(name);
 				}

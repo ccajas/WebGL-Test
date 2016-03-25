@@ -130,7 +130,7 @@ var vm = new Vue(
 				name: 'Component', 	  
 				icon: ['&#xf01c;', '&#xf0ab;'], 
 				color: '#fb0',
-				src: ['']
+				src: []
 			},
 			{ 
 				name: 'System',	  
@@ -149,6 +149,12 @@ var vm = new Vue(
 				icon: ['&#xf11e;', '&#xf04e;'],
 				color: '#0bf',
 				src: ['System']
+			},
+			{
+				name: 'Asset',
+				icon: ['&#xf10a;', '&#xf10a;'],
+				color: '#70f',
+				src: []
 			}
 		],
 
@@ -256,6 +262,9 @@ var vm = new Vue(
 
 				if (this.section.name == 'System')
 					this.app.addSystem(text);
+
+				if (this.section.name == 'Asset')
+					this.app.addContent(text);
 			}
 		}
 	},
