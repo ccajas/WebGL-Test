@@ -128,27 +128,27 @@ var vm = new Vue(
 		sections: [
 			{ 
 				name: 'Component', 	  
-				icon: '&#xf01c;', 
+				icon: ['&#xf01c;', '&#xf0ab;'], 
 				color: '#fb0',
-				src: []
+				src: ['']
 			},
 			{ 
 				name: 'System',	  
-				icon: '&#xf04e;', 
+				icon: ['&#xf04e;', '&#xf01c;'], 
 				color: '#bf7',
-				src: [ [], 'Component' ]
+				src: ['Component']
 			},
 			{ 
 				name: 'EntityTemplate', 
-				icon: '&#xf020;', 
+				icon: ['&#xf020;', '&#xf01c;'], 
 				color: '#7ff',
-				src: [ [], 'Component' ]
+				src: ['Component']
 			},
 			{ 
 				name: 'ScreenElement',  
-				icon: '&#xf11e;', 
+				icon: ['&#xf11e;', '&#xf04e;'],
 				color: '#0bf',
-				src: []
+				src: ['System']
 			}
 		],
 
@@ -176,15 +176,11 @@ var vm = new Vue(
 		// Setup data sources
 		this.sections.forEach(function(section)
 		{
-			for (var i = 0; i < section.src.length; i++)
+			// Replace strings with arrays for data sources
+			if (section.src[0])
 			{
-				// Replace strings with arrays for data sources
-				if (section.src[i].length > 0)
-				{
-					var name = section.src[i].toLowerCase() + '_data';
-					console.log(self[name].data);
-					section.src[i] = self[name].data;
-				}
+				var name = section.src[0].toLowerCase() + '_data';
+				section.src = self[name].data;
 			}
 		});
 

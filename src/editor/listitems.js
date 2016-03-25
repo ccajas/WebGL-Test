@@ -86,20 +86,19 @@ Vue.component('editable',
 	{
 		hasSrc: function() 
 		{
-			var pos = this.lv - 1;
-			return this.src && this.src[pos] && this.src[pos].length > 0;
+			return this.lv > 1 && this.src && this.src.length > 0;
 		},
 
 		// Split value to find metadata/item type
 		values: function() 
 		{
-			// Load value from index if source is founc
+			// Load value from index if source is found
 			if (this.hasSrc 
 				&& !isNaN(parseFloat(this.value)) 
 				&& isFinite(this.value))
 			{
 				// Test for decimal numbers only
-				return this.src[this.lv - 1][this.value].name.split(' ');
+				return this.src[this.value].name.split(' ');
 			}
 
 			return this.value.split(' ');
@@ -126,7 +125,7 @@ Vue.component('editable',
 			this.$els.field.style.display = 'none';
 		},
 
-		updateCombo: function()
+		updateSrc: function()
 		{
 			if (!this.hasSrc) return;
 
@@ -137,7 +136,9 @@ Vue.component('editable',
 
 			for (key in src)
 			{
-				if (src[key].name.indexOf(this.value) !== -1)
+				var match = this.value.toLowerCase();
+
+				if (src[key].name.toLowerCase().indexOf(match) !== -1)
 				{
 					var name = src[key].name;
 					this.srcValues.push({ 'name': name, 'key' : key });
@@ -163,9 +164,14 @@ Vue.component('editable',
 			{
 				if (this.hasSrc)
 				{
+					var key = this.srcValues[0].key;
 					this.value = (this.srcValues.length > 0) ? 
 						this.srcValues[0].key : 
 						this.tempValue;
+					
+					// Add source data recursively
+					var src = this.src[this.lv - 1];
+					this.$dispatch('updateSrcData', src[key]);
 				}
 				else
 					this.value = text.replace(/ +/g, ' ');
