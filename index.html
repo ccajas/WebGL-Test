@@ -9,7 +9,7 @@
 </body>
 	<div id="app">
 		<div id="container">
-		<header>
+		<!--<header>
 			<div id="app-title">Framework test</div>
 			<div id="title">Test</div>
 			<ul id="topnav">
@@ -17,7 +17,7 @@
 					<a :class="{ hl: section.name == s.name }" v-on:click="setView(s)">{{ s.name }}s</a>
 				</li>
 			</ul>
-		</header>
+		</header>-->
 		<div id="main">
 			<section id="sidebar">
 				<ul class="icon-nav">
@@ -46,8 +46,8 @@
 							</span>
 							<editable :src="section.src" :lv="level" :value="item.name" :idx="index"></editable>
 
-							<button v-if="level > 0" class="batch warn" v-on:click="remove">&#xf14e;</button>
-							<button v-if="level > 0" class="batch conf" v-on:click="addSub">&#xf14c;</button>
+							<button v-if="level > 0" class="batch warn" v-on:click="remove">&#xe9e8;</button>
+							<button v-if="level > 0" class="batch conf" v-on:click="addSub">&#xe9e3;</button>
 						</div>						
 						<ul class="sub" v-if="hasData" v-show="open">
 							<listitem v-for="item in item.data" 
