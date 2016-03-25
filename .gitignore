@@ -1,4 +1,5 @@
 .DS_Store
 *.pdf
+*.zip
 node_modules
-
+_misc
