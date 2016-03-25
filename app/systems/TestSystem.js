@@ -15,10 +15,9 @@ TestSystem = (function()
 	 * @param {ComponentManager} componentManager manager to get Components from
 	 */
 
-	function TestSystem(handle, componentManager) 
+	function TestSystem(handle) 
 	{
-		EntitySystem.call(this, handle, componentManager);
-		console.log('TestSystem object', this);
+		EntitySystem.call(this, handle);
 	}
 
 	// Inherit EntitySystem properties
@@ -26,6 +25,15 @@ TestSystem = (function()
 	TestSystem.prototype = Object.create(EntitySystem.prototype,
 	{
 		// Specific functions for TestScreen object
+		setComponents: 
+		{
+			value: function(componentManager)
+			{
+				EntitySystem.prototype.setComponents.call(this, componentManager);
+				console.log('TestSystem object', this);
+			}
+		},
+
 		process:
 		{
 			value: function(elapsed)

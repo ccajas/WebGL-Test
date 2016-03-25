@@ -161,18 +161,17 @@ var vm = new Vue(
 
 	compiled: function()
 	{
-		// Set default component type and section
 		var type = 0;
-		this.section = this.sections[0];
+		var self = this;
 
 		// Setup data groups
 		this.sections.forEach(function(section)
 		{
 			var name = section.name.toLowerCase() + '_data';
-			this[name] = JSON.parse(localStorage.getItem(name)) || 
+			self[name] = JSON.parse(localStorage.getItem(name)) || 
 				{ name: section.name +'s', data: [] }
 
-		}, this);
+		});
 
 		// Setup data sources
 		this.sections.forEach(function(section)
@@ -183,14 +182,14 @@ var vm = new Vue(
 				if (section.src[i].length > 0)
 				{
 					var name = section.src[i].toLowerCase() + '_data';
-					console.log(this[name].data);
-					section.src[i] = this[name].data;
+					console.log(self[name].data);
+					section.src[i] = self[name].data;
 				}
 			}
+		});
 
-			console.log(section.src);
-
-		}, this);
+		// Set default component type and section
+		this.section = this.sections[0];
 
 		// Reference for the current data being managed
 		this.sectionData = this[this.section.name.toLowerCase() + '_data'];
@@ -216,15 +215,14 @@ var vm = new Vue(
 			console.log('Update ECS');
 
 			var self = this;
+			console.log(this.component_data);
 
 			// Add ECS data to the app
-			this.component_data.data.forEach(function(t)
-			{
-				self.app.componentTypes.push(new ComponentType(t.name));
+			this.component_data.data.forEach(function(t){
+				self.app.componentTypes.push(ComponentType.call(this, t.name));
 			});
 
-			this.system_data.data.forEach(function(t)
-			{
+			this.system_data.data.forEach(function(t) {
 				self.app.addSystem(t.name);
 			});
 
@@ -258,7 +256,7 @@ var vm = new Vue(
 
 				// Add appropriate object based on section
 				if (this.section.name == 'Component')
-					this.app.componentTypes.push(new ComponentType(text));
+					this.app.componentTypes.push(ComponentType.call(this, text));
 
 				if (this.section.name == 'System')
 					this.app.addSystem(text);

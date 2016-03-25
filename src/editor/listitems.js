@@ -7,8 +7,7 @@ Vue.component('listitem',
 		'level'  : Number,
 		'index'  : Number,
 		'section': { type: Object },
-		'item'   : { type: Object },
-		'src'    : Array
+		'item'   : { type: Object }
 	},
 
 	template: '#listitem-template',
@@ -24,10 +23,7 @@ Vue.component('listitem',
 	{
 		hasData: function () 
 		{
-			var hasData = this.item.data && this.item.data.length > 0;		
-			//if (!hasData && this.level > 1) this.section.icon = '&#xf0ab;';
-
-			return hasData;
+			return this.item.data && this.item.data.length > 0;
 		}
 	},
 	events:
@@ -136,6 +132,7 @@ Vue.component('editable',
 
 			// Reset found values
 			this.srcValues = [];
+			var valueNames = [];
 			var src = this.src[this.lv - 1];
 
 			for (key in src)
@@ -144,8 +141,12 @@ Vue.component('editable',
 				{
 					var name = src[key].name;
 					this.srcValues.push({ 'name': name, 'key' : key });
+					valueNames.push(name);
 				}
 			}
+
+			// Update status bar as a hint to matching item names
+			this.$dispatch('updateInfo', valueNames.join(', '));
 		},
 
 		// Called on blur event when done editing item

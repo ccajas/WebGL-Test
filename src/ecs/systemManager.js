@@ -48,7 +48,6 @@ SystemMgr = (function()
 				if (this.entitySystems[i].handle === system.handle)
 				{
 					exists = true;
-					console.log('oops! dupe found');
 					break;
 				}
 			}
