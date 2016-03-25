@@ -31,7 +31,7 @@ TestSystem = (function()
 			value: function(elapsed)
 			{
 				// Display some info
-				console.log('TestSystem is processing');
+				//console.log('TestSystem is processing');
 
 				return EntitySystem.prototype.process.call(this, elapsed);
 			}

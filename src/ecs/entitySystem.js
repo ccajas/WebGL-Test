@@ -14,13 +14,25 @@ EntitySystem = (function()
 	 *
 	 * @memberOf EntitySystem
 	 * @param {String} handle the name for this EntitySystem
-	 * @param {ComponentManager} componentManager manager to get Components from
 	 */
 
-	function EntitySystem(handle, componentManager)
+	function EntitySystem(handle)
 	{
 		this.handle 	   = handle;
 		this.totalEntities = 0;
+		this.componentMgr  = null;
+		this.components    = [];
+	}
+
+	/**
+	 * Set a reference to the component list
+	 *
+	 * @memberOf EntitySystem
+	 * @param {ComponentManager} componentManager manager to get Components from
+	 */
+
+	EntitySystem.prototype.setComponents = function(componentManager)
+	{
 		this.componentMgr  = componentManager;
 		this.components    = componentManager.components;
 	}
@@ -33,7 +45,7 @@ EntitySystem = (function()
 
 	EntitySystem.prototype.updateCount = function()
 	{
-		this.totalEntities = componentMgr.TotalEntities;
+		this.totalEntities = this.componentMgr.next;
 	}
 
 	/**

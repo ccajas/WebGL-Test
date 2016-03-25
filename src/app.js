@@ -8,15 +8,13 @@ App = (function()
 {
 	'use strict';
 
-	function App(canvas) 
+	function App(canvas)
 	{
 		this.canvas = canvas;
 
 		// Data for ECS
 		this.componentTypes = [];
-		this.systems = [];
-		this.componentMgr = new ComponentManager();
-		console.log('componentMgr', this.componentMgr);
+		this.systemManager 	= new SystemManager();
 
 		// Screen handling
 		this.currentScreen = null;
@@ -66,29 +64,9 @@ App = (function()
 		addSystem: function(systemName)
 		{
 			// Look for a system script first
-			var dir  = 'app/systems/';
-			var path = dir + systemName +'.js';
-			var self = this;
+			var dir = 'app/systems/';
 
-			// Load content
-			var script = this.content.load('Script')(path,
-			{ 
-				load: function() 
-				{
-					//do stuff with the script
-					console.log('script loaded!');
-					var loadedSystem = window[systemName];
-					self.systems.push(new loadedSystem(systemName, self.componentMgr));	
-				},
-
-				error: function()
-				{
-					console.log('Failed to find script! Create system "'+ systemName +'"');
-					self.systems.push(new System(systemName, self.componentMgr));
-				}
-			});
-
-			console.log('systems', systemName);
+			this.systemManager.addSystem(systemName, dir, this.content);
 			this.notify.newSystem = systemName;
 		},
 
@@ -114,6 +92,9 @@ App = (function()
             // Update screens
             else
                 this.nextScreen = this.currentScreen.update(elapsed, canvas);
+
+            // Update the systems
+            this.systemManager.processComponents(elapsed);
 
             // Swap screen for the next frame
             if (this.nextScreen != this.currentScreen)

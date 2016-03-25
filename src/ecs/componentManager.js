@@ -34,7 +34,7 @@ ComponentMgr = (function()
 	 * @param {EntityTemplate} template entity template
 	 */
 
-	ComponentMgr.addEntityTemplate = function(templateName, template)
+	ComponentMgr.prototype.addEntityTemplate = function(templateName, template)
 	{
 		this.entityTemplates.push({ name: templateName, template: template });
 	}
@@ -49,7 +49,7 @@ ComponentMgr = (function()
 	 * @return [Object] the new entity, if created from a template name
 	 */
 
-	ComponentMgr.createEntityFromTemplate = function(templateName)
+	ComponentMgr.prototype.createEntityFromTemplate = function(templateName)
 	{
 		// Create from the template's name
 		if (typeof templateName === 'string')
@@ -92,7 +92,7 @@ ComponentMgr = (function()
 	 * @param {number} entityID the entity's ID
 	 */
 
-	ComponentMgr.disableEntity = function(entityID)
+	ComponentMgr.prototype.disableEntity = function(entityID)
 	{
 		// Check every list for proper updating
 		for (cmpArray in this.components.groups)
@@ -109,7 +109,7 @@ ComponentMgr = (function()
 	 * @memberOf ComponentMgr
 	 */
 
-	ComponentMgr.removeEntities = function()
+	ComponentMgr.prototype.removeEntities = function()
 	{
 		var total = this.next;
 
