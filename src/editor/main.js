@@ -254,17 +254,22 @@ var vm = new Vue(
 				var nextType = this.sectionData.length + 1;
 				this.sectionData.data.push({ name: text, type: nextType, data: [] });
 				this.newItem = '';
-				this.$emit('saveStorage');
+
+				var msg = '';
 
 				// Add appropriate object based on section
 				if (this.section.name == 'Component')
 					this.app.componentTypes.push(ComponentType.call(this, text));
 
 				if (this.section.name == 'System')
-					this.app.addSystem(text);
+					msg = this.app.addSystem(text);
 
 				if (this.section.name == 'Asset')
-					this.app.addContent(text);
+					msg = this.app.addContent(text);
+
+				if (msg) this.$broadcast('error', text);
+
+				this.$emit('saveStorage');
 			}
 		}
 	},

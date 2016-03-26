@@ -65,9 +65,13 @@ App = (function()
 		{
 			// Look for a system script first
 			var dir = 'app/systems/';
-
-			this.systemManager.addSystem(systemName, dir, this.content);
+			var out = '';
+			
+			this.systemManager.addSystem(systemName, dir, this.content, out);
 			this.notify.newSystem = systemName;
+
+			console.log(out);
+			return out;
 		},
 
 		addContent: function(fileName, type)
@@ -75,8 +79,9 @@ App = (function()
 			// Look in the assets folder first
 			var dir = 'app/assets/';
 			var path = dir + fileName;
+			var out = this.content.load('Model')(path, path);
 
-			this.content.load('Model')(path, path);
+			return out;
 		},
 
 		// Draw the scene

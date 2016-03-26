@@ -168,9 +168,8 @@ footer #info-text {
 /* Scrollbar */
 
 ::-webkit-scrollbar-thumb {
-	background-color: #111;
-	color: #aaa;
-	width: 8px;
+	background-color: #1c1c1c;
+	border: 2px solid #272727;
 }
 ::-webkit-scrollbar-track {
 	margin: 0px;

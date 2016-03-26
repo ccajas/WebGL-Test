@@ -37,6 +37,13 @@ Vue.component('listitem',
 		{
 			this.item.name = value;
 			this.$dispatch('saveStorage');
+		},
+
+		error: function(value)
+		{
+			console.log('broadcasting '+ value)
+			if (this.item.name == value)
+				console.log('dispatched error to '+ value);
 		}
 	},
 	methods:
@@ -176,7 +183,7 @@ Vue.component('editable',
 					this.value = text.replace(/ +/g, ' ');
 
 				this.tempValue = this.value;
-				this.$dispatch('updateName', this.value, this.idx);
+				this.$dispatch('updateName', this.value);
 			}
 		}
 	}

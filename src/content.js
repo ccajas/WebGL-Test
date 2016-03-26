@@ -174,11 +174,11 @@ ContentManager = (function()
 	 * @function
 	 * @memberOf ContentManager
 	 * @param {String} file the script's file name
-	 * @param {Object} funcs functions called on file load/error
+	 * @param {Object} callbacks functions called on file load/error
 	 * @return {Promise} Promise containing XHR response
 	 */	
 
-	var loadScript = function(file, funcs)
+	var loadScript = function(file, callbacks)
 	{
 		var scriptDOM = document.createElement('script');
 
@@ -187,11 +187,10 @@ ContentManager = (function()
 
         // Add it in the head tag
         document.head.appendChild(scriptDOM);
-        console.log(funcs);
 
         // Call appropriate function
-        scriptDOM.onload  = funcs.load;
-        scriptDOM.onerror = funcs.error;
+        scriptDOM.onload  = callbacks.load;
+        scriptDOM.onerror = callbacks.error;
 
         return scriptDOM;
 	}

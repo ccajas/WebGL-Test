@@ -70,7 +70,7 @@ SystemMgr = (function()
 	 * @param {Object} content reference to the ContentManager
 	 */
 
-	SystemMgr.prototype.addSystem = function(systemName, dir, content)
+	SystemMgr.prototype.addSystem = function(systemName, dir, content, msg)
 	{
 		// Look for a system script first
 		var path = dir + systemName +'.js';
@@ -83,16 +83,23 @@ SystemMgr = (function()
 			{
 				//do stuff with the script
 				console.log('script loaded!');
-				var loadedSystem = window[systemName];
-				self.addSystems
-				(
-					[ new loadedSystem(systemName) ]
-				);
+				var system = window[systemName];
+
+				if (typeof(system) !== 'undefined')
+					self.addSystems
+					(
+						[ new system(systemName) ]
+					);
+				else
+				{
+					msg = 'Invalid system script: '+ systemName;
+					console.error(msg);
+				}
 			},
 
 			error: function()
 			{
-				console.log('Failed to find script! Create system "'+ systemName +'"');
+				console.log('Create system "'+ systemName +'"');
 				self.addSystems
 				(
 					[ new System(systemName) ]
@@ -122,6 +129,7 @@ SystemMgr = (function()
 		}
 
 		// Unset the global variable for this System if it exists
+		
 		if (typeof (window[systemName]) !== 'undefined')
 			delete window[systemName];
 	}
