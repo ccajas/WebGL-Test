@@ -8,7 +8,6 @@
 </head>
 </body>
 	<div id="app">
-		<div id="container">
 		<!--<header>
 			<div id="app-title">Framework test</div>
 			<div id="title">Test</div>
@@ -18,8 +17,43 @@
 				</li>
 			</ul>
 		</header>-->
-		<div id="main">
-			<section id="sidebar">
+
+			<!-- listitem template -->
+			<script type="text/x-template" id="listitem-template">
+				<li>
+					<div v-on:mouseover="info">
+						<span v-on:click="open = !open" class="batch">
+							{{{ icon ? level > 1 ? icon[1] : icon[0] : '' }}}
+							<span v-if="hasData" v-show="!open">{{{ '&#xf01d' }}}</span>
+						</span>
+						<editable :src="section.src" :lv="level" :value="item.name" :idx="index"></editable>
+
+						<button v-if="level > 0" class="batch conf" v-on:click="addSub">&#xe9e3;</button>
+						<button v-if="level > 0" class="batch warn" v-on:click="remove">&#xe9e8;</button>
+					</div>						
+					<ul class="sub" v-if="hasData" v-show="open">
+						<listitem v-for="item in item.data" 
+							:section="section" :level="level+1" :icon="icon" :item="item" :index="$index">
+						</listitem>
+					</ul>
+				</li>
+			</script>
+
+			<!-- single editable item -->
+			<script type="text/x-template" id="item-editable">
+				<span>
+					<span v-on:dblclick="select" v-show="!selected">
+						{{ values[0] }}
+						<i v-if="values[1]">{{ values[1] }}</i>
+					</span>
+					<input v-el:field v-model="value"
+						v-on:keyup="updateSrc"
+						v-on:keyup.enter="update"
+						v-on:keyup.esc="deselect" v-on:blur="deselect"/>
+				</span>
+			</script>
+
+			<div class="sidebar left">
 				<ul class="icon-nav">
 					<li v-for="s in sections">
 						<a :class="{ hl: section.name == s.name }" v-on:click="setView(s)">
@@ -33,55 +67,25 @@
 				</div>
 
 				<ul class="hierarchy">
-					<listitem :item="sectionData" :section="section" :level="0" :index="$index">
+					<listitem :section="section" :level="0" :icon="section.icon" 
+						:item="sectionData" :index="$index">
 					</listitem>
 				</ul>
+			</div>
 
-				<!-- listitem template -->
-				<script type="text/x-template" id="listitem-template">
-					<li>
-						<div v-on:mouseover="info">
-							<span v-on:click="open = !open" class="batch">
-								{{{ level > 1 ? section.icon[1] : section.icon[0] }}}
-								<span v-if="hasData" v-show="!open">{{{ '&#xf01d' }}}</span>
-							</span>
-							<editable :src="section.src" :lv="level" :value="item.name" :idx="index"></editable>
+			<div class="sidebar right">
+				<h3>{{ section.name }} Properties</h3>
+			</div>
 
-							<button v-if="level > 0" class="batch conf" v-on:click="addSub">&#xe9e3;</button>
-							<button v-if="level > 0" class="batch warn" v-on:click="remove">&#xe9e8;</button>
-						</div>						
-						<ul class="sub" v-if="hasData" v-show="open">
-							<listitem v-for="item in item.data" 
-								:level="level+1" :item="item" :index="$index" :section="section">
-							</listitem>
-						</ul>
-					</li>
-				</script>
-
-				<!-- single editable item -->
-				<script type="text/x-template" id="item-editable">
-					<span>
-						<span v-on:dblclick="select" v-show="!selected">
-							{{ values[0] }}
-							<i v-if="values[1]">{{ values[1] }}</i>
-						</span>
-						<input v-el:field v-model="value"
-							v-on:keyup="updateSrc"
-							v-on:keyup.enter="update"
-							v-on:keyup.esc="deselect" v-on:blur="deselect"/>
-					</span>
-				</script>
-				
-			</section>
-
-			<section id="viewport" :app="app">
-				<viewport></viewport>
-			</section>
-		</div>
+			<div class="center">
+				<div class="center-container">
+					<viewport></viewport>
+				</div>
+			</div>
+		<!-- 
 		<footer>
 			<div id="info-text">{{ info }}</div>
-		</footer>
-	</div>
+		</footer> -->
 	<script src="lib/vue.js"></script>
 	<script src="lib/prism.js"></script>
 	<script src="framework.js"></script>

@@ -32,6 +32,7 @@ body {
 	font-size: 12px;
 	background: #272727;
 	color: #eee;
+	box-sizing: border-box;
 }
 a {
 	text-decoration: none;
@@ -90,55 +91,51 @@ footer #info-text {
 
 canvas {
 	width: 100%;
-	height: 100%;
-	background: #1c1c1c;
+	min-height: 100%;
+	background: #171717;
 }
 
 #container {
-	position: fixed;
-	padding: 0px 0px 32px 0px;
-	width: 100%;
-	height: 100%;
 	box-sizing: border-box;
 }
 
-#main {
-	position: relative;
-	min-height: 100%;
+/* for preview purposes */
+.left, .right, .center {
+    height: 100%;
 }
 
-#sidebar, #viewport {
-	position: absolute;
-	top: 0px;
-	bottom: 0px;
+.left, .right {
+	width: 250px;
+    overflow: auto;
 }
 
-#sidebar {
-	left: 0px;
-	width: 20%;
-	overflow-y: auto;
+.left {
+    float: left;
 }
 
-#sidebar h3,
-#sidebar h4 {
-	margin: 0px;
-	padding: 8px;
+.right {
+    float: right;
+}
+
+.center {
+    overflow: hidden;
+}   
+
+.sidebar h3,
+.sidebar h4 {
+	margin-top: 0px;
+	padding: 14px 8px;
+	text-align: center;
 	background: #1c1c1c;
 }
 
-#sidebar .input-w {
+.sidebar .input-w {
 	margin: 8px 8px 0px 8px;
 	padding: 2px 4px 2px 4px;
 	background: #171717;
 }
 
-#viewport {
-	right: 0px;
-	width: 80%;
-}
-
 footer {
-	bottom: 0px;
 }
 
 footer #info-text {
@@ -236,7 +233,7 @@ li {
 #topnav li a:hover {
 	cursor: pointer;
 	background: #272727;
-	color: #ccc;
+	color: #ccc;.
 }
 
 .icon-nav {
@@ -244,7 +241,7 @@ li {
 	overflow: auto;
 }
 
-#sidebar .icon-nav {
+.sidebar .icon-nav {
 	background: #1c1c1c;
 }
 
@@ -352,13 +349,13 @@ input, button {
 	outline: 0px solid transparent;
 }
 
-#sidebar input {
+.sidebar input {
 	padding: 0px;
 	margin: 0px;
 	width: 100%;
 }
 
-#sidebar input.meta {
+.sidebar input.meta {
 	padding-left: 5px;
 }
 
