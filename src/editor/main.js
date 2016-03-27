@@ -1,5 +1,5 @@
 
-Vue.config.debug = false;
+Vue.config.debug = true;
 
 Vue.component('viewport', 
 {
@@ -170,6 +170,9 @@ var vm = new Vue(
 		var type = 0;
 		var self = this;
 
+		// Set default component type and section
+		this.section = this.sections[0];
+
 		// Setup data groups
 		this.sections.forEach(function(section)
 		{
@@ -189,9 +192,6 @@ var vm = new Vue(
 				section.src = self[name].data;
 			}
 		});
-
-		// Set default component type and section
-		this.section = this.sections[0];
 
 		// Reference for the current data being managed
 		this.sectionData = this[this.section.name.toLowerCase() + '_data'];
@@ -217,7 +217,6 @@ var vm = new Vue(
 			console.log('Update ECS');
 
 			var self = this;
-			console.log(this.component_data);
 
 			// Add ECS data to the app
 			this.component_data.data.forEach(function(t){
@@ -225,7 +224,7 @@ var vm = new Vue(
 			});
 
 			this.system_data.data.forEach(function(t) {
-				self.app.addSystem(t.name);
+				self.app.addSystem(t.name, self.itemError(t.name));
 			});
 
 			// Display any error messages
@@ -249,6 +248,8 @@ var vm = new Vue(
 		addItem: function()
 		{
 			var text = this.newItem.trim();
+			var self = this;
+
 			if (text)
 			{
 				var nextType = this.sectionData.length + 1;
@@ -262,15 +263,21 @@ var vm = new Vue(
 					this.app.componentTypes.push(ComponentType.call(this, text));
 
 				if (this.section.name == 'System')
-					msg = this.app.addSystem(text);
+				{
+					// Callback to handle invalid System scripts
+					this.app.addSystem(text, this.itemError(text));
+				}
 
 				if (this.section.name == 'Asset')
-					msg = this.app.addContent(text);
-
-				if (msg) this.$broadcast('error', text);
+					this.app.addContent(text);
 
 				this.$emit('saveStorage');
 			}
+		},
+
+		itemError: function(text)
+		{
+			this.$broadcast('error', text);
 		}
 	},
 });

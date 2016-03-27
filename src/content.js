@@ -189,8 +189,8 @@ ContentManager = (function()
         document.head.appendChild(scriptDOM);
 
         // Call appropriate function
-        scriptDOM.onload  = callbacks.load;
-        scriptDOM.onerror = callbacks.error;
+        scriptDOM.onload  = callbacks.found;
+        scriptDOM.onerror = callbacks.notFound;
 
         return scriptDOM;
 	}

@@ -61,17 +61,14 @@ App = (function()
 			}
 		},
 
-		addSystem: function(systemName)
+		addSystem: function(systemName, error)
 		{
 			// Look for a system script first
 			var dir = 'app/systems/';
-			var out = '';
 			
-			this.systemManager.addSystem(systemName, dir, this.content, out);
+			console.log('callback', error);
+			this.systemManager.addSystem(systemName, dir, this.content, error);
 			this.notify.newSystem = systemName;
-
-			console.log(out);
-			return out;
 		},
 
 		addContent: function(fileName, type)

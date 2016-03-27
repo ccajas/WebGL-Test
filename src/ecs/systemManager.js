@@ -68,9 +68,10 @@ SystemMgr = (function()
 	 * @param {String} systemName name of the EntitySystem to look for
 	 * @param {String} dir directory name for the EntitySystem scripts
 	 * @param {Object} content reference to the ContentManager
+	 * @param {Function} callback function to call if EntitySystem script is invalid
 	 */
 
-	SystemMgr.prototype.addSystem = function(systemName, dir, content, msg)
+	SystemMgr.prototype.addSystem = function(systemName, dir, content, callback)
 	{
 		// Look for a system script first
 		var path = dir + systemName +'.js';
@@ -79,7 +80,7 @@ SystemMgr = (function()
 		// Load content
 		var script = content.load('Script')(path,
 		{ 
-			load: function() 
+			found: function() 
 			{
 				//do stuff with the script
 				console.log('script loaded!');
@@ -93,11 +94,10 @@ SystemMgr = (function()
 				else
 				{
 					msg = 'Invalid system script: '+ systemName;
-					console.error(msg);
 				}
 			},
 
-			error: function()
+			notFound: function()
 			{
 				console.log('Create system "'+ systemName +'"');
 				self.addSystems

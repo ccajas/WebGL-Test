@@ -6,6 +6,7 @@ Vue.component('listitem',
 	props: {
 		'level'  : Number,
 		'index'  : Number,
+		'icon'   : Array,
 		'section': { type: Object },
 		'item'   : { type: Object }
 	},
@@ -113,7 +114,7 @@ Vue.component('editable',
 	},
 	methods:
 	{
-		select: function()
+		rename: function()
 		{
 			this.selected  = true;
 			this.tempValue = this.value;

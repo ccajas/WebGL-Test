@@ -42,7 +42,7 @@
 			<!-- single editable item -->
 			<script type="text/x-template" id="item-editable">
 				<span>
-					<span v-on:dblclick="select" v-show="!selected">
+					<span v-on:dblclick="rename" v-show="!selected">
 						{{ values[0] }}
 						<i v-if="values[1]">{{ values[1] }}</i>
 					</span>
